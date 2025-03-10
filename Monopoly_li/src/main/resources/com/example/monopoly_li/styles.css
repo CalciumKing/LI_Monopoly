@@ -1,0 +1,31 @@
+.button:hover {
+    -fx-cursor: hand;
+}
+
+.gameButton {
+    -fx-background-radius: 1000px;
+    -fx-border-color: black;
+    -fx-border-radius: 1000px;
+    -fx-background-color: transparent;
+}
+.gameButton:hover {
+    -fx-cursor: hand;
+    -fx-background-color: grey;
+}
+
+.bar:hover {
+    -fx-cursor: open_hand;
+}
+.close, .min, .max {
+    -fx-background-color: whitesmoke;
+    -fx-text-fill: black;
+}
+.close:hover {
+    -fx-background-color: red;
+}
+.max:hover {
+    -fx-background-color: blue;
+}
+.min:hover {
+    -fx-background-color: #4a4a4a;
+}
