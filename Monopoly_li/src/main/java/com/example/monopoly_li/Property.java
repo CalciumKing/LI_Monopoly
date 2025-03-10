@@ -1,23 +1,23 @@
 package com.example.monopoly_li;
+
 public class Property extends Cell {
-    private final int id, price, rent, house1Rent, house2Rent, house3Rent, house4Rent, hotelRent;
+    private final int id, price;
+    private final int[] rent = new int[6];
     private int stage;
     private final String color;
     private Player owner;
     
     public Property(String name, int id, int price,
-                    int rent, int house1Rent, int house2Rent,
-                    int house3Rent, int house4Rent, int hotelRent,
-                    String color, int stage) {
+                    int[] rent, String color, int stage) {
         super(name);
         this.id = id;
         this.price = price;
-        this.rent = rent;
-        this.house1Rent = house1Rent;
-        this.house2Rent = house2Rent;
-        this.house3Rent = house3Rent;
-        this.house4Rent = house4Rent;
-        this.hotelRent = hotelRent;
+        this.rent[0] = rent[0];
+        this.rent[1] = rent[1];
+        this.rent[2] = rent[2];
+        this.rent[3] = rent[3];
+        this.rent[4] = rent[4];
+        this.rent[5] = rent[5];
         this.color = color;
         this.stage = stage;
     }
@@ -29,22 +29,7 @@ public class Property extends Cell {
         return price;
     }
     public int getRent() {
-        return rent;
-    }
-    public int getHouse1Rent() {
-        return house1Rent;
-    }
-    public int getHouse2Rent() {
-        return house2Rent;
-    }
-    public int getHouse3Rent() {
-        return house3Rent;
-    }
-    public int getHouse4Rent() {
-        return house4Rent;
-    }
-    public int getHotelRent() {
-        return hotelRent;
+        return rent[stage];
     }
     public String getName() {
         return name;
@@ -57,6 +42,9 @@ public class Property extends Cell {
     }
     public void setStage(int stage) {
         this.stage = stage;
+    }
+    public void addStage() {
+        this.stage++;
     }
     public Player getOwner() {
         return owner;

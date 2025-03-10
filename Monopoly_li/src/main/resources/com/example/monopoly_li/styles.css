@@ -29,3 +29,9 @@
 .min:hover {
     -fx-background-color: #4a4a4a;
 }
+
+.div {
+    -fx-border-color: black;
+    -fx-border-radius: 15px;
+    -fx-border-width: 2px;
+}

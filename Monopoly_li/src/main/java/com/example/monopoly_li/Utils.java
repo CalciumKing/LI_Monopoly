@@ -1,6 +1,8 @@
 package com.example.monopoly_li;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -10,6 +12,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.util.Optional;
 
@@ -55,6 +58,32 @@ public class Utils {
             );
             e.printStackTrace();
             return -1;
+        }
+    }
+    
+    public static void changeScene(String sceneName, int gameID) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource(sceneName));
+            Parent root = fxmlLoader.load();
+            
+            if(gameID != -1) {
+                BoardController boardController = fxmlLoader.getController();
+                boardController.initialize(gameID, SQLUtils.getPlayers(gameID));
+            }
+            
+            Stage stage = new Stage();
+            stage.initStyle(StageStyle.TRANSPARENT);
+            stage.setTitle("Monopoly Application | Game " + ((gameID != -1) ? "ID: " + gameID : "Select"));
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            Utils.errorAlert(
+                    Alert.AlertType.ERROR,
+                    "Scene Error",
+                    "Error Changing Scene",
+                    "There was an error changing scenes, please try again"
+            );
+            e.printStackTrace();
         }
     }
     

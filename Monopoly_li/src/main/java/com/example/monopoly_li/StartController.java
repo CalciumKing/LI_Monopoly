@@ -55,6 +55,7 @@ public class StartController {
     private void enterGame() {
         int gameID = Utils.safeParseInt(gameIDField.getText());
         if (gameID == -1) return;
+        
         if (SQLUtils.gameExists(gameID, gamePasswordField.getText())) {
             changeScene(gameID);
         } else {
@@ -68,27 +69,8 @@ public class StartController {
     }
     
     private void changeScene(int gameID) {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("board.fxml"));
-            Parent root = fxmlLoader.load();
-            
-            BoardController boardController = fxmlLoader.getController();
-            boardController.setPlayers(SQLUtils.getPlayers(gameID));
-            
-            Stage stage = new Stage();
-            stage.initStyle(StageStyle.TRANSPARENT);
-            stage.setTitle("Monopoly | Game ID: " + gameID);
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (Exception e) {
-            Utils.errorAlert(
-                    Alert.AlertType.ERROR,
-                    "Scene Error",
-                    "Error Changing Scene",
-                    "There was an error changing scenes, please try again"
-            );
-            e.printStackTrace();
-        }
+        Utils.changeScene("board.fxml", gameID);
+        page.getScene().getWindow().hide();
     }
     
     // region Window Settings
