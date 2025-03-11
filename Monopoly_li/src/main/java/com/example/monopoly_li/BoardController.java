@@ -1,16 +1,16 @@
 package com.example.monopoly_li;
 
+import com.example.monopoly_li.Square.Action;
+import com.example.monopoly_li.Square.Card;
+import com.example.monopoly_li.Square.Cell;
+import com.example.monopoly_li.Square.Property;
 import javafx.fxml.FXML;
 import javafx.event.ActionEvent;
-import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-
-import java.net.URL;
-import java.util.ResourceBundle;
 
 public class BoardController {
     @FXML
@@ -31,7 +31,7 @@ public class BoardController {
         properties = SQLUtils.getAllProperties(gameID);
         this.players = players;
         this.gameID = gameID;
-        printPlayers();
+//        printPlayers();
         initPlayerInfo();
         initOtherPlayerInfo();
     }
@@ -56,15 +56,30 @@ public class BoardController {
         Player currentPlayer = players[turn];
         playerName.setText("Player ID:" + currentPlayer.getId());
         playerMoney.setText("$" + currentPlayer.getBalance());
-        //player properties
-        // player rolled
-        landed.setText(properties[currentPlayer.getPosition()].getName());
+        rolled.setText("Player Rolled: -1");
+        currentPlayer.setPrevPosition(currentPlayer.getPosition());
+        landed.setText("Player Landed: " + properties[currentPlayer.getPosition()].getName());
+        
+        playerProperties.setText("");
+        for (Property property : currentPlayer.getOwned()) {
+            playerProperties.setText(playerProperties.getText() + property.getName() + "\n");
+        }
     }
     
     @FXML
     private void initOtherPlayerInfo() {
-        //loop through all players
-        //player names, balances, positions
+        otherPlayersList.setText("");
+        for (int i = 0; i < players.length; i++) {
+            if(i == turn) continue;
+            
+            Player curr = players[i];
+            otherPlayersList.setText(
+                    otherPlayersList.getText() +
+                    curr.getId() +
+                    " $" + curr.getBalance() +
+                    ", " + properties[curr.getPosition()].getName()
+            );
+        }
     }
     
     @FXML
@@ -77,9 +92,15 @@ public class BoardController {
     
     }
     
+    private void drawCard(boolean isChest, Player player) {
+        Card card = new Card(isChest);
+        card.drawCard().execute(player);
+    }
+    
     @FXML
     private void endTurn() {
         turn = (turn + 1) % players.length;
+        // continue method
     }
     
     // region Window Settings

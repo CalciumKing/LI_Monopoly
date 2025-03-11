@@ -1,5 +1,6 @@
 package com.example.monopoly_li;
 
+import com.example.monopoly_li.Square.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
@@ -9,6 +10,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 public class SQLUtils {
     public static boolean gameExists(int gameID, String password) {
@@ -132,10 +134,14 @@ public class SQLUtils {
             
             int i = 0;
             while(result.next()) {
-                if(!result.getString("color").equals("special")) {
+                String name = result.getString("property_name"),
+                        color = result.getString("color");
+                int id = result.getInt("property_id");
+                
+                if(!color.equals("SPECIAL") && !color.equals("UTILITY")) {
                     data[i] = new Property(
-                            result.getString("property_name"),
-                            result.getInt("property_id"),
+                            name,
+                            id,
                             result.getInt("price"),
                             new int[]{result.getInt("house0"),
                                     result.getInt("house1"),
@@ -144,11 +150,39 @@ public class SQLUtils {
                                     result.getInt("house4"),
                                     result.getInt("hotel")
                             },
-                            result.getString("color"),
-                            getStage(gameID, result.getInt("property_id"))
+                            color,
+                            getStage(gameID, id)
                     );
                 } else {
-                    // add action property (not implemented yet)
+                    data[i] = switch(name) {
+                        case "Go" -> new Action(
+                                name,
+                                Type.GO,
+                                id,
+                                Player::passGo
+                        );
+                        case "Go To Jail" -> new Action(
+                                name,
+                                Type.GO_TO_JAIL,
+                                id,
+                                Player::goToJail
+                        );
+                        case "Chance 1", "Chance 2", "Chance 3" -> new Action(
+                                name,
+                                Type.CHANCE,
+                                id,
+                                __ -> new Card(false).drawCard(), // Card::drawCard ???
+                                true
+                        );
+                        case "Community Chest 1", "Community Chest 2", "Community Chest 3" -> new Action(
+                                name,
+                                Type.CHEST,
+                                id,
+                                __ -> new Card(true).drawCard(), // Card::drawCard ???
+                                true
+                        );
+                        default -> null; // change this
+                    };
                 }
                 i++;
             }
@@ -179,13 +213,6 @@ public class SQLUtils {
             
             if(result.next())
                 return result.getInt(1);
-            else
-                Utils.errorAlert(
-                        Alert.AlertType.ERROR,
-                        "Error Getting Stage",
-                        "No Property",
-                        "That property does not exist, no stage found."
-                );
         } catch (Exception e) {
             Utils.errorAlert(
                     Alert.AlertType.ERROR,

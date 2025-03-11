@@ -11,7 +11,6 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane fx:id="page" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: lightblue;" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.monopoly_li.StartController">
    <children>
       <ImageView fitHeight="218.0" fitWidth="574.0" layoutX="83.0" layoutY="28.0" pickOnBounds="true" preserveRatio="true" smooth="false">
@@ -50,42 +49,54 @@
                <font>
                   <Font name="System Bold" size="35.0" />
                </font>
+               <graphic>
+                  <FontAwesomeIcon glyphName="PLUS" />
+               </graphic>
             </Button>
             <Button fx:id="gameSelectBtn" layoutX="52.0" layoutY="278.0" mnemonicParsing="false" onAction="#changePage" prefHeight="77.0" prefWidth="495.0" styleClass="gameButton" text="Game Select">
                <font>
                   <Font name="System Bold" size="35.0" />
                </font>
+               <graphic>
+                  <FontAwesomeIcon glyphName="SAVE" />
+               </graphic>
             </Button>
          </children>
       </AnchorPane>
       <AnchorPane fx:id="gameSelectPage" layoutY="27.0" prefHeight="373.0" prefWidth="600.0">
          <children>
-            <Button fx:id="backBtn" layoutX="14.0" layoutY="8.0" mnemonicParsing="false" onAction="#changePage" prefHeight="37.0" prefWidth="59.0" styleClass="gameButton" text="Back">
+            <Button fx:id="backBtn" layoutX="14.0" layoutY="8.0" mnemonicParsing="false" onAction="#changePage" prefHeight="37.0" prefWidth="76.0" styleClass="gameButton" text="Back">
                <font>
                   <Font name="System Bold" size="15.0" />
                </font>
+               <graphic>
+                  <FontAwesomeIcon glyphName="ARROW_LEFT" />
+               </graphic>
             </Button>
             <Label layoutX="204.0" layoutY="1.0" text="Game Select">
                <font>
-                  <Font size="35.0" />
+                  <Font name="System Bold" size="35.0" />
                </font>
             </Label>
             <Label layoutX="229.0" layoutY="156.0" text="Game ID:">
                <font>
-                  <Font size="35.0" />
+                  <Font name="System Bold" size="35.0" />
                </font>
             </Label>
             <Label layoutX="173.0" layoutY="240.0" text="Game Password:">
                <font>
-                  <Font size="35.0" />
+                  <Font name="System Bold" size="35.0" />
                </font>
             </Label>
             <TextField fx:id="gameIDField" alignment="CENTER" layoutX="225.0" layoutY="208.0" promptText="Game ID" />
             <PasswordField fx:id="gamePasswordField" layoutX="225.0" layoutY="291.0" onAction="#enterGame" promptText="Game Password" />
-            <Button layoutX="246.0" layoutY="333.0" mnemonicParsing="false" onAction="#enterGame" prefHeight="37.0" prefWidth="107.0" styleClass="gameButton" text="Enter Game">
+            <Button contentDisplay="RIGHT" layoutX="239.0" layoutY="322.0" mnemonicParsing="false" onAction="#enterGame" prefHeight="37.0" prefWidth="122.0" styleClass="gameButton" text="Enter Game">
                <font>
                   <Font name="System Bold" size="15.0" />
                </font>
+               <graphic>
+                  <FontAwesomeIcon glyphName="PLAY" />
+               </graphic>
             </Button>
          </children>
       </AnchorPane>

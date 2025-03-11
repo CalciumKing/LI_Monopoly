@@ -95,7 +95,7 @@
       </Pane>
       <Pane layoutX="293.0" layoutY="305.0" prefHeight="89.0" prefWidth="303.0" styleClass="div">
          <children>
-            <Label fx:id="otherPlayersList" layoutX="3.0" layoutY="-2.0" prefHeight="89.0" prefWidth="146.0" text="Player Name $0 Player Name $9999 Player Name $9999" wrapText="true">
+            <Label fx:id="otherPlayersList" layoutX="3.0" layoutY="-2.0" prefHeight="89.0" prefWidth="154.0" text="Player Name $0 Player Name $9999 Player Name $9999" wrapText="true">
                <font>
                   <Font size="17.0" />
                </font>
