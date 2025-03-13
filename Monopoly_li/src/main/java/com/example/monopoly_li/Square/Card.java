@@ -14,6 +14,7 @@ public class Card extends Cell {
         cards.add(new Action(
                 "Advance to GO",
                 player -> {
+                    System.out.println("working3");
                     player.setPosition(0);
                     player.passGo();
                 }
@@ -21,34 +22,52 @@ public class Card extends Cell {
         
         cards.add(new Action(
                 "Bank pays you $50",
-                player -> player.addBalance(50)
+                player -> {
+                    System.out.println("working1");
+                    player.addBalance(50);
+                }
         ));
         
         cards.add(new Action(
                 "Advance to Boardwalk",
-                player -> player.setPosition(39)
+                player -> {
+                    System.out.println("working4");
+                    player.setPosition(39);
+                }
         ));
         
         cards.add(new Action(
                 "You inherit $100",
-                player -> player.addBalance(100)
+                player -> {
+                    System.out.println("working2");
+                    player.addBalance(100);
+                }
         ));
         
         cards.add(new Action(
                 "From sale of stock you get $45",
-                player -> player.addBalance(45)
+                player -> {
+                    System.out.println("working5");
+                    player.addBalance(45);
+                }
         ));
         // endregion
         
         // region Bad Cards
         cards.add(new Action(
                 "Go directly to Jail. Do not pass GO, do not collect $200.",
-                Player::goToJail
+                player -> {
+                    System.out.println("working6");
+                    player.goToJail();
+                }
         ));
         
         cards.add(new Action(
                 "Doctor’s fees. Pay $50",
-                player -> player.removeBalance(50)
+                player -> {
+                    System.out.println("working7");
+                    player.removeBalance(50);
+                }
         ));
         // endregion
     }
@@ -62,6 +81,6 @@ public class Card extends Cell {
     }
     
     public Action drawCard() {
-        return cards.get((int)(Math.random() * ((getType() == Type.CHEST) ? 6 : cards.size())));
+        return cards.get((int)(Math.random() * ((getType() == Type.CHEST) ? 4 : cards.size())));
     }
 }

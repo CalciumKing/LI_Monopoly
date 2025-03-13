@@ -19,7 +19,7 @@ public class BoardController {
     
     private Player[] players;
     private Cell[] properties;
-    private Cell currentCell;
+//    , currentPos;
     private int[] dice = new int[1];
     private int turn = -1, gameID, playerTurns;
     private double defaultWidth, defaultHeight;
@@ -29,6 +29,7 @@ public class BoardController {
         turn = SQLUtils.getTurn(gameID);
         properties = SQLUtils.getAllProperties(gameID);
         this.players = players;
+//        currentPos = new Cell[]{properties[players[turn].getPosition()]}
         this.gameID = gameID;
         playerTurns = 0;
 //        printPlayers();
@@ -53,7 +54,7 @@ public class BoardController {
     @FXML
     private void initPlayerInfo() {
         Player currentPlayer = players[turn];
-        currentCell = properties[currentPlayer.getPosition()];
+//        currentPos[turn] = properties[currentPlayer.getPosition()];
         dice = new int[]{0, 0};
         updateUI(currentPlayer);
         rolled.setText("Player Rolled: -1");
@@ -64,7 +65,8 @@ public class BoardController {
         playerName.setText("Player ID: " + currentPlayer.getId());
         playerMoney.setText("$" + currentPlayer.getBalance());
         rolled.setText("Player Rolled: " + dice[0] + " + " + dice[1]);
-        landed.setText("Player Landed: " + currentCell.getName());
+//        landed.setText("Player Landed: " + currentPos[turn].getName());
+        landed.setText("Player Landed: " + properties[players[turn].getPosition()].getName());
         
         playerProperties.setText("");
         for (Property property : currentPlayer.getOwned())
@@ -79,38 +81,8 @@ public class BoardController {
                     otherPlayersList.getText() +
                     curr.getId() +
                     " $" + curr.getBalance() +
-                    ", " + currentCell.getName()
+                    ", " + properties[players[i].getPosition()].getName()
             );
-        }
-        
-        switch(currentCell.getType()) {
-            case PROPERTY -> { // non-action, purchasable cells
-                Property property = (Property) currentCell;
-                if (property.getOwner() == null) {
-                    buySellBtn.setVisible(true);
-                    addHouseHotelBtn.setVisible(false);
-                } else if (property.getOwner().equals(currentPlayer)) {
-                    buySellBtn.setVisible(false);
-                    addHouseHotelBtn.setVisible(true);
-                } else
-                    hideButtons();
-            }
-            case GO_TO_JAIL, TAX -> { // cells with actions
-                ((Action) currentCell).execute(currentPlayer);
-                hideButtons();
-            }
-            case CHANCE, CHEST -> { // merge with above
-                System.out.println("Chance/Chest");
-                Action action = (Action) currentCell;
-                action.execute(currentPlayer);
-                System.out.println(action.getDescription());
-                hideButtons();
-            }
-            case JAIL, FREE_PARKING -> hideButtons(); // non-action, non-purchasable cells
-            case GO -> { // merge with above
-                System.out.println("Passed Go");
-                hideButtons();
-            }
         }
     }
     
@@ -140,9 +112,47 @@ public class BoardController {
         player.setPrevPosition(player.getPosition());
         dice = new int[]{((int) (Math.random() * 6) + 1), ((int) (Math.random() * 6) + 1)};
         player.move(dice[0] + dice[1]);
-        currentCell = properties[player.getPosition()];
+//        currentPos[turn] = properties[player.getPosition()];
         playerTurns++;
         updateUI(player);
+        checkCell();
+    }
+    
+    private void checkCell() {
+        Player currentPlayer = players[turn];
+        Cell currentCell = properties[currentPlayer.getPosition()];
+        switch(currentCell.getType()) {
+            case PROPERTY -> { // non-action, purchasable cells
+                Property property = (Property) currentCell;
+                if (property.getOwner() == null) {
+                    buySellBtn.setVisible(true);
+                    addHouseHotelBtn.setVisible(false);
+                } else if (property.getOwner().equals(currentPlayer)) {
+                    buySellBtn.setVisible(false);
+                    addHouseHotelBtn.setVisible(true);
+                } else
+                    hideButtons();
+            }
+            case GO_TO_JAIL, TAX -> { // cells with actions
+                ((Action) currentCell).execute(currentPlayer);
+//                currentCell[turn] = properties[currentPlayer.getPosition()];
+                hideButtons();
+                updateUI(players[turn]);
+            }
+            case CHANCE, CHEST -> { // merge with above
+                System.out.println("Chance/Chest");
+                Action action = (Action) currentCell;
+                action.execute(currentPlayer);
+                System.out.println(action.getDescription());
+                hideButtons();
+                updateUI(players[turn]);
+            }
+            case JAIL, FREE_PARKING -> hideButtons(); // non-action, non-purchasable cells
+            case GO -> { // merge with above
+                System.out.println("Passed Go");
+                hideButtons();
+            }
+        }
     }
     
     @FXML

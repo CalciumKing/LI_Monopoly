@@ -173,7 +173,7 @@ public class SQLUtils {
                     );
                 } else {
                     data[i] = switch(name) {
-                        case "Go" -> new Action(
+                        case "Go" -> new Action( // change to empty cell if remove passgo,
                                 name,
                                 "Advance to GO",
                                 Type.GO,

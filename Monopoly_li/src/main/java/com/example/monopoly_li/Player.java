@@ -64,9 +64,11 @@ public class Player {
     // region Other Methods
     public void addBalance(int amount) {
         balance += amount;
+        System.out.println("added:" + amount + ", balance:" + balance);
     }
     public void removeBalance(int amount) {
         balance -= amount;
+        System.out.println("removed:" + amount + ", balance:" + balance);
     }
     public void payTax(double percent) {
         balance = (int) ((1 - percent) * balance);

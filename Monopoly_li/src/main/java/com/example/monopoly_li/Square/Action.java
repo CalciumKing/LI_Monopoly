@@ -40,7 +40,6 @@ public class Action extends Cell {
     }
     
     public void execute(Player player) {
-        System.out.println(getDescription());
         if(effect != null)
             effect.accept(player);
         else
