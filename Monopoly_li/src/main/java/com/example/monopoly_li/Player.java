@@ -8,6 +8,7 @@ public class Player {
     private final int id, game;
     private int balance, position, prevPosition;
     private ArrayList<Property> owned;
+    private boolean inJail;
     
     // constructor for making a new player for a new game
     public Player(int id, int game) {
@@ -16,14 +17,16 @@ public class Player {
         balance = 1500;
         position = 0;
         owned = new ArrayList<>();
+        inJail = false;
     }
     
     // constructor for loading an existing player
-    public Player(int id, int game, int balance,
+    public Player(int id, int game, int balance, boolean inJail,
                   int position, ArrayList<Property> owned) {
         this.id = id;
         this.game = game;
         this.balance = balance;
+        this.inJail = inJail;
         this.position = position;
         this.owned = owned;
     }
@@ -59,19 +62,27 @@ public class Player {
     public void setPrevPosition(int prevPosition) {
         this.prevPosition = prevPosition;
     }
+    public boolean isInJail() {
+        return inJail;
+    }
+    public void setInJail(boolean inJail) {
+        this.inJail = inJail;
+    }
     // endregion
     
     // region Other Methods
     public void addBalance(int amount) {
+        System.out.print("old balance:" + balance);
         balance += amount;
-        System.out.println("added:" + amount + ", balance:" + balance);
+        System.out.println(" added:" + amount + ", new balance:" + balance);
     }
     public void removeBalance(int amount) {
+        System.out.print("old balance:" + balance);
         balance -= amount;
-        System.out.println("removed:" + amount + ", balance:" + balance);
+        System.out.println(" removed:" + amount + ", new balance:" + balance);
     }
     public void payTax(double percent) {
-        balance = (int) ((1 - percent) * balance);
+        removeBalance((int) (balance * percent));
     }
     public void addProperty(Property property) {
         owned.add(property);
@@ -83,6 +94,7 @@ public class Player {
         setPosition(10);
     }
     public void passGo() {
+        System.out.println("Passed Go");
         addBalance(200);
     }
     public void move(int spaces) {

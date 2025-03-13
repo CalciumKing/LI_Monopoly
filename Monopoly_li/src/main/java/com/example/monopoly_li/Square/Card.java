@@ -4,11 +4,12 @@ import com.example.monopoly_li.Player;
 import java.util.ArrayList;
 
 public class Card extends Cell {
-    private final ArrayList<Action> cards;
+    private final Action card;
     
     public Card(boolean isChest) {
         super(checkChest(isChest), checkType(isChest));
-        cards = new ArrayList<>();
+        
+        ArrayList<Action> cards = new ArrayList<>();
         
         // region Good Cards
         cards.add(new Action(
@@ -58,6 +59,7 @@ public class Card extends Cell {
                 "Go directly to Jail. Do not pass GO, do not collect $200.",
                 player -> {
                     System.out.println("working6");
+                    player.setInJail(true);
                     player.goToJail();
                 }
         ));
@@ -70,8 +72,15 @@ public class Card extends Cell {
                 }
         ));
         // endregion
+        
+        card = cards.get((int)(Math.random() * ((isChest) ? 4 : cards.size())));
     }
     
+    public Action getCard() {
+        return card;
+    }
+    
+    // region super() helper methods
     private static String checkChest(boolean isChest) {
         return (isChest) ? "Community Chest" : "Chance Card";
     }
@@ -79,8 +88,5 @@ public class Card extends Cell {
     private static Type checkType(boolean isChest) {
         return (isChest) ? Type.CHEST : Type.CHANCE;
     }
-    
-    public Action drawCard() {
-        return cards.get((int)(Math.random() * ((getType() == Type.CHEST) ? 4 : cards.size())));
-    }
+    // endregion
 }

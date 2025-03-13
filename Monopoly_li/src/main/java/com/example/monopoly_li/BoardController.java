@@ -4,10 +4,14 @@ import com.example.monopoly_li.Square.*;
 import javafx.fxml.FXML;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+
+import java.util.Optional;
 
 public class BoardController {
     @FXML
@@ -104,15 +108,38 @@ public class BoardController {
     
     private void drawCard(boolean isChest, Player player) {
         Card card = new Card(isChest);
-        card.drawCard().execute(player);
+        card.getCard().execute(player);
     }
     
     private void takeTurn() {
         Player player = players[turn];
+        
+        Optional<ButtonType> optionSelected = (player.isInJail()) ? Utils.confirmAlert(
+            Alert.AlertType.INFORMATION,
+            "Player In Jail",
+            "Player is in Jail, Roll Or Pay",
+            "Would you like to roll dice for a chance to " +
+                    "get doubles and escape prison, or pay $200 to escape",
+            "Roll For Doubles",
+            "Pay $200"
+        ) : Optional.empty();
+        
         player.setPrevPosition(player.getPosition());
         dice = new int[]{((int) (Math.random() * 6) + 1), ((int) (Math.random() * 6) + 1)};
-        player.move(dice[0] + dice[1]);
+        
+        if (optionSelected.isPresent()) {
+            if(optionSelected.get().getText().equals("Roll For Doubles")) {
+                if(dice[0] == dice[1])
+                    player.setInJail(false);
+            } else {
+                player.removeBalance(200);
+                player.setInJail(false);
+            }
+        } else {
+            player.move(dice[0] + dice[1]);
 //        currentPos[turn] = properties[player.getPosition()];
+        }
+        
         playerTurns++;
         updateUI(player);
         checkCell();
@@ -121,8 +148,9 @@ public class BoardController {
     private void checkCell() {
         Player currentPlayer = players[turn];
         Cell currentCell = properties[currentPlayer.getPosition()];
-        switch(currentCell.getType()) {
-            case PROPERTY -> { // non-action, purchasable cells
+        Action action;
+        switch (currentCell.getType()) {
+            case PROPERTY: // non-action, purchasable cells
                 Property property = (Property) currentCell;
                 if (property.getOwner() == null) {
                     buySellBtn.setVisible(true);
@@ -132,26 +160,30 @@ public class BoardController {
                     addHouseHotelBtn.setVisible(true);
                 } else
                     hideButtons();
-            }
-            case GO_TO_JAIL, TAX -> { // cells with actions
-                ((Action) currentCell).execute(currentPlayer);
+                break;
 //                currentCell[turn] = properties[currentPlayer.getPosition()];
-                hideButtons();
-                updateUI(players[turn]);
-            }
-            case CHANCE, CHEST -> { // merge with above
-                System.out.println("Chance/Chest");
-                Action action = (Action) currentCell;
+            case GO_TO_JAIL, TAX: // cells with actions
+                action = (Action) currentCell;
                 action.execute(currentPlayer);
-                System.out.println(action.getDescription());
+                System.out.println(action.getName() + "," + action.getDescription());
                 hideButtons();
                 updateUI(players[turn]);
-            }
-            case JAIL, FREE_PARKING -> hideButtons(); // non-action, non-purchasable cells
-            case GO -> { // merge with above
-                System.out.println("Passed Go");
+                break;
+            case CHEST, CHANCE: // merge with above
+                System.out.println(currentCell.getType());
+                action = (Action) currentCell;
+                action.execute(currentPlayer);
+                System.out.println(action.getName() + "," + action.getDescription());
                 hideButtons();
-            }
+                updateUI(players[turn]);
+                break;
+            case FREE_PARKING, JAIL:
+                hideButtons();
+                break;
+            case GO: // merge with above
+                System.out.println("On Go");
+                hideButtons();
+                break;
         }
     }
     

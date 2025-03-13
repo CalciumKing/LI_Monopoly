@@ -37,10 +37,11 @@ public class Utils {
     }
     
     public static Optional<ButtonType> confirmAlert(Alert.AlertType type, String title,
-                                                    String headerText, String contentText) {
+                                                    String headerText, String contentText,
+                                                    String aText, String bText) {
         Alert alert = createAlert(type, title, headerText, contentText);
-        ButtonType yes = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
-        ButtonType no = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType yes = new ButtonType(aText, ButtonBar.ButtonData.OK_DONE);
+        ButtonType no = new ButtonType(bText, ButtonBar.ButtonData.CANCEL_CLOSE);
         alert.getButtonTypes().setAll(yes, no);
         return alert.showAndWait();
     }
