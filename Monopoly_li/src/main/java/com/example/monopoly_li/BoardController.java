@@ -19,7 +19,7 @@ public class BoardController {
     @FXML
     private AnchorPane page;
     @FXML
-    private Label rolled, landed, playerName, playerMoney, playerProperties, otherPlayersList;
+    private Label rolled, landed, playerName, playerMoney, playerProperties, otherPlayersList, tabText;
     
     private Player[] players;
     private Cell[] properties;
@@ -29,12 +29,15 @@ public class BoardController {
     private double defaultWidth, defaultHeight;
     private boolean alreadyMaximized = false;
     
-    public void initialize(int gameID, Player[] players) {
+    public void initialize(int gameID, Player[] players, boolean alreadyMaximized) {
         turn = SQLUtils.getTurn(gameID);
         properties = SQLUtils.getAllProperties(gameID);
+        if(alreadyMaximized) windowMaximize();
+        tabText.setText("Monopoly Application | Game ID: " + gameID);
         this.players = players;
 //        currentPos = new Cell[]{properties[players[turn].getPosition()]}
         this.gameID = gameID;
+        this.alreadyMaximized = alreadyMaximized;
         playerTurns = 0;
 //        printPlayers();
         initPlayerInfo();
@@ -149,6 +152,7 @@ public class BoardController {
         Player currentPlayer = players[turn];
         Cell currentCell = properties[currentPlayer.getPosition()];
         Action action;
+        
         switch (currentCell.getType()) {
             case PROPERTY: // non-action, purchasable cells
                 Property property = (Property) currentCell;

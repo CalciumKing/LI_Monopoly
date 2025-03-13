@@ -1,53 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="page" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: lightblue;" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.monopoly_li.BoardController">
+<AnchorPane fx:id="page" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="399.0" prefWidth="710.0" style="-fx-background-color: lightblue;" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.monopoly_li.BoardController">
    <children>
-      <ImageView fitHeight="218.0" fitWidth="574.0" layoutX="83.0" layoutY="28.0" pickOnBounds="true" preserveRatio="true" smooth="false" visible="false">
-         <image>
-            <Image url="file:\C:\Users\ingerslevlk\Documents\Repos\Monopoly_li\Monopoly_li\bin\images\monopoly_background.png" />
-         </image>
-      </ImageView>
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#cecece" height="28.0" onMouseDragged="#windowDrag" onMousePressed="#windowClick" stroke="BLACK" strokeType="INSIDE" styleClass="bar" width="600.0" />
-      <Button layoutX="520.0" layoutY="2.0" mnemonicParsing="false" onAction="#windowMinimize" styleClass="min" textFill="#0d00c5">
-         <font>
-            <Font name="System Bold" size="12.0" />
-         </font>
-         <graphic>
-            <FontAwesomeIcon glyphName="MINUS" />
-         </graphic>
-      </Button>
-      <Button layoutX="546.0" layoutY="2.0" mnemonicParsing="false" onAction="#windowMaximize" styleClass="max">
-         <font>
-            <Font name="System Bold" size="12.0" />
-         </font>
-         <graphic>
-            <FontAwesomeIcon glyphName="SQUARE" />
-         </graphic>
-      </Button>
-      <Button layoutX="573.0" layoutY="2.0" mnemonicParsing="false" onAction="#windowClose" styleClass="close" textFill="#0d00c5">
-         <font>
-            <Font name="System Bold" size="12.0" />
-         </font>
-         <graphic>
-            <FontAwesomeIcon glyphName="CLOSE" />
-         </graphic>
-      </Button>
-      <ImageView fitHeight="264.0" fitWidth="266.0" layoutX="14.0" layoutY="73.0" pickOnBounds="true" preserveRatio="true">
+      <Pane prefHeight="28.0" prefWidth="709.0">
+         <children>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#cecece" height="28.0" onMouseDragged="#windowDrag" onMousePressed="#windowClick" stroke="BLACK" strokeType="INSIDE" styleClass="bar" width="710.0" />
+            <Label fx:id="tabText" disable="true" layoutX="7.0" layoutY="1.0" text="Monopoly Application | Game ID: #">
+               <font>
+                  <Font name="Arial Black" size="17.0" />
+               </font>
+            </Label>
+            <Button layoutX="629.0" layoutY="2.0" mnemonicParsing="false" onAction="#windowMinimize" styleClass="min" textFill="#0d00c5">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+               <graphic>
+                  <FontAwesomeIcon glyphName="MINUS" />
+               </graphic>
+            </Button>
+            <Button layoutX="655.0" layoutY="2.0" mnemonicParsing="false" onAction="#windowMaximize" styleClass="max">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+               <graphic>
+                  <FontAwesomeIcon glyphName="SQUARE" />
+               </graphic>
+            </Button>
+            <Button layoutX="682.0" layoutY="2.0" mnemonicParsing="false" onAction="#windowClose" styleClass="close" textFill="#0d00c5">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+               <graphic>
+                  <FontAwesomeIcon glyphName="CLOSE" />
+               </graphic>
+            </Button>
+         </children>
+      </Pane>
+      <ImageView fitHeight="354.0" fitWidth="350.0" layoutX="14.0" layoutY="35.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="file:/C:\Users\ingerslevlk\Documents\Repos\Monopoly_li\Monopoly_li\bin\images\monopoly_board.jpg" />
          </image>
       </ImageView>
-      <Pane layoutX="447.0" layoutY="35.0" prefHeight="65.0" prefWidth="146.0" styleClass="div">
+      <Pane layoutX="542.0" layoutY="35.0" prefHeight="65.0" prefWidth="155.0" styleClass="div">
          <children>
             <Label fx:id="playerName" layoutX="3.0" layoutY="-2.0" text="PLAYER NAME">
                <font>
@@ -61,7 +67,7 @@
             </Label>
          </children>
       </Pane>
-      <Pane layoutX="447.0" layoutY="107.0" prefHeight="191.0" prefWidth="146.0" styleClass="div">
+      <Pane layoutX="542.0" layoutY="109.0" prefHeight="191.0" prefWidth="155.0" styleClass="div">
          <children>
             <Label layoutX="3.0" layoutY="-2.0" text="Properties:">
                <font>
@@ -75,7 +81,7 @@
             </Label>
          </children>
       </Pane>
-      <Pane layoutX="293.0" layoutY="35.0" prefHeight="264.0" prefWidth="146.0" styleClass="div">
+      <Pane layoutX="379.0" layoutY="35.0" prefHeight="264.0" prefWidth="155.0" styleClass="div">
          <children>
             <Label fx:id="rolled" layoutX="7.0" layoutY="1.0" prefHeight="65.0" prefWidth="146.0" text="Player Rolled: 1" wrapText="true">
                <font>
@@ -92,7 +98,7 @@
             <Button fx:id="addHouseHotelBtn" layoutX="22.0" layoutY="200.0" mnemonicParsing="false" onAction="#addHouseHotel" styleClass="gameButton" text="Add House/Hotel" />
          </children>
       </Pane>
-      <Pane layoutX="293.0" layoutY="305.0" prefHeight="89.0" prefWidth="303.0" styleClass="div">
+      <Pane layoutX="381.0" layoutY="306.0" prefHeight="89.0" prefWidth="322.0" styleClass="div">
          <children>
             <Label fx:id="otherPlayersList" layoutX="3.0" layoutY="-2.0" prefHeight="89.0" prefWidth="303.0" text="Player Name $0, Mediterranean Ave Player Name $9999, Mediterranean Ave Player Name $9999, Mediterranean Ave" wrapText="true">
                <font>
@@ -101,5 +107,23 @@
             </Label>
          </children>
       </Pane>
+      <StackPane layoutX="220.0" layoutY="96.0" prefHeight="218.0" prefWidth="288.0" visible="false">
+         <children>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="LIGHTBLUE" height="256.0" stroke="BLACK" strokeType="INSIDE" width="295.0" />
+            <Label fx:id="tabText1" text="Notif Name">
+               <font>
+                  <Font name="Arial Black" size="17.0" />
+               </font>
+            </Label>
+            <Label fx:id="tabText11" layoutX="105.0" layoutY="125.0" text="Notif Description">
+               <font>
+                  <Font name="Arial Black" size="17.0" />
+               </font>
+            </Label>
+         </children>
+      </StackPane>
    </children>
+   <opaqueInsets>
+      <Insets />
+   </opaqueInsets>
 </AnchorPane>

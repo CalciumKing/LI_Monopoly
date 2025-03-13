@@ -8,44 +8,54 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="page" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: lightblue;" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.monopoly_li.StartController">
+<AnchorPane fx:id="page" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="712.0" style="-fx-background-color: lightblue;" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.monopoly_li.StartController">
    <children>
-      <ImageView fitHeight="218.0" fitWidth="574.0" layoutX="83.0" layoutY="28.0" pickOnBounds="true" preserveRatio="true" smooth="false">
+      <Pane layoutX="1.0" layoutY="-1.0" prefHeight="28.0" prefWidth="709.0">
+         <children>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#cecece" height="28.0" onMouseDragged="#windowDrag" onMousePressed="#windowClick" stroke="BLACK" strokeType="INSIDE" styleClass="bar" width="710.0" />
+            <Label fx:id="tabText" disable="true" layoutX="7.0" layoutY="1.0" text="Monopoly Application | Game Select">
+               <font>
+                  <Font name="Arial Black" size="17.0" />
+               </font>
+            </Label>
+            <Button layoutX="629.0" layoutY="2.0" mnemonicParsing="false" onAction="#windowMinimize" styleClass="min" textFill="#0d00c5">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+               <graphic>
+                  <FontAwesomeIcon glyphName="MINUS" />
+               </graphic>
+            </Button>
+            <Button layoutX="655.0" layoutY="2.0" mnemonicParsing="false" onAction="#windowMaximize" styleClass="max">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+               <graphic>
+                  <FontAwesomeIcon glyphName="SQUARE" />
+               </graphic>
+            </Button>
+            <Button layoutX="682.0" layoutY="2.0" mnemonicParsing="false" onAction="#windowClose" styleClass="close" textFill="#0d00c5">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+               <graphic>
+                  <FontAwesomeIcon glyphName="CLOSE" />
+               </graphic>
+            </Button>
+         </children>
+      </Pane>
+      <ImageView fitHeight="218.0" fitWidth="574.0" layoutX="139.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true" smooth="false">
          <image>
             <Image url="file:\C:\Users\ingerslevlk\Documents\Repos\Monopoly_li\Monopoly_li\bin\images\monopoly_background.png" />
          </image>
       </ImageView>
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#cecece" height="28.0" onMouseDragged="#windowDrag" onMousePressed="#windowClick" stroke="BLACK" strokeType="INSIDE" styleClass="bar" width="600.0" />
-      <Button layoutX="520.0" layoutY="2.0" mnemonicParsing="false" onAction="#windowMinimize" styleClass="min" textFill="#0d00c5">
-         <font>
-            <Font name="System Bold" size="12.0" />
-         </font>
-         <graphic>
-            <FontAwesomeIcon glyphName="MINUS" />
-         </graphic>
-      </Button>
-      <Button layoutX="546.0" layoutY="2.0" mnemonicParsing="false" onAction="#windowMaximize" styleClass="max">
-         <font>
-            <Font name="System Bold" size="12.0" />
-         </font>
-         <graphic>
-            <FontAwesomeIcon glyphName="SQUARE" />
-         </graphic>
-      </Button>
-      <Button layoutX="573.0" layoutY="2.0" mnemonicParsing="false" onAction="#windowClose" styleClass="close" textFill="#0d00c5">
-         <font>
-            <Font name="System Bold" size="12.0" />
-         </font>
-         <graphic>
-            <FontAwesomeIcon glyphName="CLOSE" />
-         </graphic>
-      </Button>
-      <AnchorPane fx:id="startPage" layoutY="27.0" prefHeight="373.0" prefWidth="600.0" visible="false">
+      <AnchorPane fx:id="startPage" layoutY="27.0" prefHeight="373.0" prefWidth="711.0" visible="false">
          <children>
-            <Button fx:id="newGameBtn" layoutX="52.0" layoutY="185.0" mnemonicParsing="false" onAction="#newGame" prefHeight="77.0" prefWidth="495.0" styleClass="gameButton" text="New Game">
+            <Button fx:id="newGameBtn" layoutX="108.0" layoutY="169.0" mnemonicParsing="false" onAction="#newGame" prefHeight="77.0" prefWidth="495.0" styleClass="gameButton" text="New Game">
                <font>
                   <Font name="System Bold" size="35.0" />
                </font>
@@ -53,7 +63,7 @@
                   <FontAwesomeIcon glyphName="PLUS" />
                </graphic>
             </Button>
-            <Button fx:id="gameSelectBtn" layoutX="52.0" layoutY="278.0" mnemonicParsing="false" onAction="#changePage" prefHeight="77.0" prefWidth="495.0" styleClass="gameButton" text="Game Select">
+            <Button fx:id="gameSelectBtn" layoutX="108.0" layoutY="270.0" mnemonicParsing="false" onAction="#changePage" prefHeight="77.0" prefWidth="495.0" styleClass="gameButton" text="Game Select">
                <font>
                   <Font name="System Bold" size="35.0" />
                </font>
@@ -73,24 +83,24 @@
                   <FontAwesomeIcon glyphName="ARROW_LEFT" />
                </graphic>
             </Button>
-            <Label layoutX="204.0" layoutY="1.0" text="Game Select">
+            <Label layoutX="254.0" layoutY="1.0" text="Game Select">
                <font>
                   <Font name="System Bold" size="35.0" />
                </font>
             </Label>
-            <Label layoutX="229.0" layoutY="156.0" text="Game ID:">
+            <Label layoutX="285.0" layoutY="161.0" text="Game ID:">
                <font>
                   <Font name="System Bold" size="35.0" />
                </font>
             </Label>
-            <Label layoutX="173.0" layoutY="240.0" text="Game Password:">
+            <Label layoutX="226.0" layoutY="233.0" text="Game Password:">
                <font>
                   <Font name="System Bold" size="35.0" />
                </font>
             </Label>
-            <TextField fx:id="gameIDField" alignment="CENTER" layoutX="225.0" layoutY="208.0" promptText="Game ID" />
-            <PasswordField fx:id="gamePasswordField" layoutX="225.0" layoutY="291.0" onAction="#enterGame" promptText="Game Password" />
-            <Button contentDisplay="RIGHT" layoutX="239.0" layoutY="322.0" mnemonicParsing="false" onAction="#enterGame" prefHeight="37.0" prefWidth="122.0" styleClass="gameButton" text="Enter Game">
+            <TextField fx:id="gameIDField" alignment="CENTER" layoutX="286.0" layoutY="212.0" promptText="Game ID" />
+            <PasswordField fx:id="gamePasswordField" layoutX="286.0" layoutY="284.0" onAction="#enterGame" promptText="Game Password" />
+            <Button contentDisplay="RIGHT" layoutX="294.0" layoutY="321.0" mnemonicParsing="false" onAction="#enterGame" prefHeight="37.0" prefWidth="122.0" styleClass="gameButton" text="Enter Game">
                <font>
                   <Font name="System Bold" size="15.0" />
                </font>
@@ -98,6 +108,11 @@
                   <FontAwesomeIcon glyphName="PLAY" />
                </graphic>
             </Button>
+            <ImageView fitHeight="400.0" fitWidth="717.0" layoutY="-27.0" pickOnBounds="true" preserveRatio="true" visible="false">
+               <image>
+                  <Image url="@../../../../../../bin/images/vo9vm1fcqrp71.jpg" />
+               </image>
+            </ImageView>
          </children>
       </AnchorPane>
    </children>

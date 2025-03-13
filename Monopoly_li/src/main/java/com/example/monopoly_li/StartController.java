@@ -69,7 +69,7 @@ public class StartController {
     }
     
     private void changeScene(int gameID) {
-        Utils.changeScene("board.fxml", gameID);
+        Utils.changeScene("board.fxml", gameID, alreadyMaximized);
         page.getScene().getWindow().hide();
     }
     

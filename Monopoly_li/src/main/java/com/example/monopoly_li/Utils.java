@@ -62,21 +62,27 @@ public class Utils {
         }
     }
     
-    public static void changeScene(String sceneName, int gameID) {
+    public static void changeScene(String sceneName, int gameID, boolean maximized) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource(sceneName));
             Parent root = fxmlLoader.load();
             
-            if(gameID != -1) {
+            if(gameID != -1) { // entering game
+                Stage stage = new Stage();
+                stage.initStyle(StageStyle.TRANSPARENT);
+                stage.setTitle("Monopoly Application | Game ID: " + gameID);
+                stage.setScene(new Scene(root));
+                stage.show();
+                
                 BoardController boardController = fxmlLoader.getController();
-                boardController.initialize(gameID, SQLUtils.getPlayers(gameID));
+                boardController.initialize(gameID, SQLUtils.getPlayers(gameID), maximized);
+            } else { // exiting game
+                Stage stage = new Stage();
+                stage.initStyle(StageStyle.TRANSPARENT);
+                stage.setTitle("Monopoly Application | Game Select");
+                stage.setScene(new Scene(root));
+                stage.show();
             }
-            
-            Stage stage = new Stage();
-            stage.initStyle(StageStyle.TRANSPARENT);
-            stage.setTitle("Monopoly Application | Game " + ((gameID != -1) ? "ID: " + gameID : "Select"));
-            stage.setScene(new Scene(root));
-            stage.show();
         } catch (Exception e) {
             Utils.errorAlert(
                     Alert.AlertType.ERROR,
