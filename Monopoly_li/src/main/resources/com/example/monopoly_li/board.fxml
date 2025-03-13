@@ -10,7 +10,6 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane fx:id="page" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: lightblue;" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.monopoly_li.BoardController">
    <children>
       <ImageView fitHeight="218.0" fitWidth="574.0" layoutX="83.0" layoutY="28.0" pickOnBounds="true" preserveRatio="true" smooth="false" visible="false">
@@ -95,7 +94,7 @@
       </Pane>
       <Pane layoutX="293.0" layoutY="305.0" prefHeight="89.0" prefWidth="303.0" styleClass="div">
          <children>
-            <Label fx:id="otherPlayersList" layoutX="3.0" layoutY="-2.0" prefHeight="89.0" prefWidth="154.0" text="Player Name $0 Player Name $9999 Player Name $9999" wrapText="true">
+            <Label fx:id="otherPlayersList" layoutX="3.0" layoutY="-2.0" prefHeight="89.0" prefWidth="303.0" text="Player Name $0, Mediterranean Ave Player Name $9999, Mediterranean Ave Player Name $9999, Mediterranean Ave" wrapText="true">
                <font>
                   <Font size="17.0" />
                </font>

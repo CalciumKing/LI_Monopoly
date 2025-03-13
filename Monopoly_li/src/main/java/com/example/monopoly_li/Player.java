@@ -68,6 +68,9 @@ public class Player {
     public void removeBalance(int amount) {
         balance -= amount;
     }
+    public void payTax(double percent) {
+        balance = (int) ((1 - percent) * balance);
+    }
     public void addProperty(Property property) {
         owned.add(property);
     }
@@ -79,6 +82,13 @@ public class Player {
     }
     public void passGo() {
         addBalance(200);
+    }
+    public void move(int spaces) {
+        position += spaces;
+        if(position >= 40) {
+            position %= 40;
+            passGo();
+        }
     }
     // endregion
 }

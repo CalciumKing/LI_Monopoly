@@ -136,14 +136,16 @@ public class SQLUtils {
             while(result.next()) {
                 String name = result.getString("property_name"),
                         color = result.getString("color");
-                int id = result.getInt("property_id");
+                int id = result.getInt("property_id"),
+                        price = result.getInt("price");
                 
                 if(!color.equals("SPECIAL") && !color.equals("UTILITY")) {
                     data[i] = new Property(
                             name,
                             id,
-                            result.getInt("price"),
-                            new int[]{result.getInt("house0"),
+                            price,
+                            new int[] {
+                                    result.getInt("house0"),
                                     result.getInt("house1"),
                                     result.getInt("house2"),
                                     result.getInt("house3"),
@@ -153,35 +155,80 @@ public class SQLUtils {
                             color,
                             getStage(gameID, id)
                     );
+                } else if(color.equals("UTILITY")) {
+                    data[i] = new Property(
+                            name,
+                            id,
+                            price,
+                            new int[] { // change values to dice roll multipliers
+                                    48,
+                                    120,
+                                    9999999,
+                                    9999999,
+                                    9999999,
+                                    9999999
+                            },
+                            color,
+                            getStage(gameID, id)
+                    );
                 } else {
                     data[i] = switch(name) {
                         case "Go" -> new Action(
                                 name,
+                                "Advance to GO",
                                 Type.GO,
                                 id,
-                                Player::passGo
+                                Player::passGo // possibly remove because of move() in Player
+                        );
+                        case "Jail" -> new Cell(
+                                name,
+                                Type.JAIL,
+                                id
+                        );
+                        case "Free Parking" -> new Cell(
+                                name,
+                                Type.FREE_PARKING,
+                                id
                         );
                         case "Go To Jail" -> new Action(
                                 name,
+                                "Go directly to Jail. Do not pass GO, do not collect $200.",
                                 Type.GO_TO_JAIL,
                                 id,
                                 Player::goToJail
                         );
-                        case "Chance 1", "Chance 2", "Chance 3" -> new Action(
-                                name,
-                                Type.CHANCE,
-                                id,
-                                __ -> new Card(false).drawCard(), // Card::drawCard ???
-                                true
-                        );
-                        case "Community Chest 1", "Community Chest 2", "Community Chest 3" -> new Action(
-                                name,
-                                Type.CHEST,
-                                id,
-                                __ -> new Card(true).drawCard(), // Card::drawCard ???
-                                true
-                        );
-                        default -> null; // change this
+                        case "Chance 1", "Chance 2", "Chance 3" -> {
+                            Card card = new Card(false);
+                            yield new Action(
+                                    name,
+                                    card.drawCard().getDescription(),
+                                    Type.CHANCE,
+                                    id,
+                                    __ -> card.drawCard() // Card::drawCard ???
+                            );
+                        }
+                        case "Community Chest 1", "Community Chest 2", "Community Chest 3" -> {
+                            Card card = new Card(true);
+                            yield new Action(
+                                    name,
+                                    card.drawCard().getDescription(),
+                                    Type.CHEST,
+                                    id,
+                                    __ -> card.drawCard() // Card::drawCard ???
+                            );
+                        }
+                        case "Income Tax", "Luxury Tax" -> new Action(
+                                    name,
+                                    "Pay Tax",
+                                    Type.TAX,
+                                    id,
+                                    player -> player.payTax(.1)
+                            );
+                        default -> {
+                            System.out.println(id);
+                            System.out.println(name);
+                            yield null;
+                        }
                     };
                 }
                 i++;

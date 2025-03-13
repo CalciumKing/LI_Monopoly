@@ -1,9 +1,6 @@
 package com.example.monopoly_li;
 
-import com.example.monopoly_li.Square.Action;
-import com.example.monopoly_li.Square.Card;
-import com.example.monopoly_li.Square.Cell;
-import com.example.monopoly_li.Square.Property;
+import com.example.monopoly_li.Square.*;
 import javafx.fxml.FXML;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
@@ -22,18 +19,20 @@ public class BoardController {
     
     private Player[] players;
     private Cell[] properties;
+    private Cell currentCell;
+    private int[] dice = new int[1];
+    private int turn = -1, gameID, playerTurns;
     private double defaultWidth, defaultHeight;
     private boolean alreadyMaximized = false;
-    private int turn = -1, gameID;
     
     public void initialize(int gameID, Player[] players) {
         turn = SQLUtils.getTurn(gameID);
         properties = SQLUtils.getAllProperties(gameID);
         this.players = players;
         this.gameID = gameID;
+        playerTurns = 0;
 //        printPlayers();
         initPlayerInfo();
-        initOtherPlayerInfo();
     }
     
     private void printPlayers() {
@@ -54,20 +53,23 @@ public class BoardController {
     @FXML
     private void initPlayerInfo() {
         Player currentPlayer = players[turn];
-        playerName.setText("Player ID:" + currentPlayer.getId());
-        playerMoney.setText("$" + currentPlayer.getBalance());
+        currentCell = properties[currentPlayer.getPosition()];
+        dice = new int[]{0, 0};
+        updateUI(currentPlayer);
         rolled.setText("Player Rolled: -1");
         currentPlayer.setPrevPosition(currentPlayer.getPosition());
-        landed.setText("Player Landed: " + properties[currentPlayer.getPosition()].getName());
-        
-        playerProperties.setText("");
-        for (Property property : currentPlayer.getOwned()) {
-            playerProperties.setText(playerProperties.getText() + property.getName() + "\n");
-        }
     }
     
-    @FXML
-    private void initOtherPlayerInfo() {
+    private void updateUI(Player currentPlayer) {
+        playerName.setText("Player ID: " + currentPlayer.getId());
+        playerMoney.setText("$" + currentPlayer.getBalance());
+        rolled.setText("Player Rolled: " + dice[0] + " + " + dice[1]);
+        landed.setText("Player Landed: " + currentCell.getName());
+        
+        playerProperties.setText("");
+        for (Property property : currentPlayer.getOwned())
+            playerProperties.setText(playerProperties.getText() + property.getName() + "\n");
+        
         otherPlayersList.setText("");
         for (int i = 0; i < players.length; i++) {
             if(i == turn) continue;
@@ -77,9 +79,45 @@ public class BoardController {
                     otherPlayersList.getText() +
                     curr.getId() +
                     " $" + curr.getBalance() +
-                    ", " + properties[curr.getPosition()].getName()
+                    ", " + currentCell.getName()
             );
         }
+        
+        switch(currentCell.getType()) {
+            case PROPERTY -> { // non-action, purchasable cells
+                Property property = (Property) currentCell;
+                if (property.getOwner() == null) {
+                    buySellBtn.setVisible(true);
+                    addHouseHotelBtn.setVisible(false);
+                } else if (property.getOwner().equals(currentPlayer)) {
+                    buySellBtn.setVisible(false);
+                    addHouseHotelBtn.setVisible(true);
+                } else
+                    hideButtons();
+            }
+            case GO_TO_JAIL, TAX -> { // cells with actions
+                ((Action) currentCell).execute(currentPlayer);
+                hideButtons();
+            }
+            case CHANCE, CHEST -> { // merge with above
+                System.out.println("Chance/Chest");
+                Action action = (Action) currentCell;
+                action.execute(currentPlayer);
+                System.out.println(action.getDescription());
+                hideButtons();
+            }
+            case JAIL, FREE_PARKING -> hideButtons(); // non-action, non-purchasable cells
+            case GO -> { // merge with above
+                System.out.println("Passed Go");
+                hideButtons();
+            }
+        }
+    }
+    
+    @FXML
+    private void hideButtons() {
+        buySellBtn.setVisible(false);
+        addHouseHotelBtn.setVisible(false);
     }
     
     @FXML
@@ -97,10 +135,29 @@ public class BoardController {
         card.drawCard().execute(player);
     }
     
+    private void takeTurn() {
+        Player player = players[turn];
+        player.setPrevPosition(player.getPosition());
+        dice = new int[]{((int) (Math.random() * 6) + 1), ((int) (Math.random() * 6) + 1)};
+        player.move(dice[0] + dice[1]);
+        currentCell = properties[player.getPosition()];
+        playerTurns++;
+        updateUI(player);
+    }
+    
     @FXML
     private void endTurn() {
+        if(dice[0] == dice[1]) {
+            if(playerTurns < 3) {
+                takeTurn();
+                return;
+            } else {
+                players[turn].goToJail();
+                playerTurns = 0;
+            }
+        }
         turn = (turn + 1) % players.length;
-        // continue method
+        takeTurn();
     }
     
     // region Window Settings

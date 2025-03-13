@@ -21,6 +21,7 @@ public class Property extends Cell {
         this.rent[5] = rent[5];
         this.color = color;
         this.stage = stage;
+        owner = null;
     }
     
     // region Getters/Setters

@@ -7,5 +7,6 @@ public enum Type {
     GO_TO_JAIL,
     JAIL,
     TAX,
-    PROPERTY
+    PROPERTY,
+    FREE_PARKING
 }
