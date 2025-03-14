@@ -4,10 +4,17 @@ import com.example.monopoly_li.Square.Property;
 
 import java.util.ArrayList;
 
+/*
+    Name: Landen Ingerslev
+    Assignment: Java Monopoly Project
+    Description: Holds information for each player, accessed by multiple
+    classes, player data is initialized each game by SQL stored data.
+*/
+
 public class Player {
     private final int id, game;
     private int balance, position, prevPosition;
-    private ArrayList<Property> owned;
+    private final ArrayList<Property> owned;
     private boolean inJail;
     
     // constructor for making a new player for a new game
@@ -20,7 +27,7 @@ public class Player {
         inJail = false;
     }
     
-    // constructor for loading an existing player
+    // overload constructor for loading an existing player
     public Player(int id, int game, int balance, boolean inJail,
                   int position, ArrayList<Property> owned) {
         this.id = id;
@@ -53,9 +60,6 @@ public class Player {
     public ArrayList<Property> getOwned() {
         return owned;
     }
-    public void setOwned(ArrayList<Property> owned) {
-        this.owned = owned;
-    }
     public int getPrevPosition() {
         return prevPosition;
     }
@@ -67,16 +71,18 @@ public class Player {
     }
     public void setInJail(boolean inJail) {
         this.inJail = inJail;
+        if (position != 10)
+            goToJail();
     }
     // endregion
     
-    // region Other Methods
-    public void addBalance(int amount) {
+    // region Helper Methods
+    public void addBalance(int amount) { // replace print statements for stack pane notification
         System.out.print("old balance:" + balance);
         balance += amount;
         System.out.println(" added:" + amount + ", new balance:" + balance);
     }
-    public void removeBalance(int amount) {
+    public void removeBalance(int amount) { // replace print statements for stack pane notification
         System.out.print("old balance:" + balance);
         balance -= amount;
         System.out.println(" removed:" + amount + ", new balance:" + balance);
@@ -94,12 +100,11 @@ public class Player {
         setPosition(10);
     }
     public void passGo() {
-        System.out.println("Passed Go");
         addBalance(200);
     }
     public void move(int spaces) {
         position += spaces;
-        if(position >= 40) {
+        if (position >= 40) {
             position %= 40;
             passGo();
         }

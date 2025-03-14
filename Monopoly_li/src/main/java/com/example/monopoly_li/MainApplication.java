@@ -8,6 +8,12 @@ import javafx.stage.StageStyle;
 
 import java.io.IOException;
 
+/*
+    Name: Landen Ingerslev
+    Assignment: Java Monopoly Project
+    Description: Main applicaiton to start up the game select start.fxml file.
+*/
+
 public class MainApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {

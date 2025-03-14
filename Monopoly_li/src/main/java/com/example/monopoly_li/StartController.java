@@ -2,48 +2,49 @@ package com.example.monopoly_li;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+
+/*
+    Name: Landen Ingerslev
+    Assignment: Java Monopoly Project
+    Description: Start page controller, handles all functionality
+    on the start page. Manages basic scene changing, input boxes, and
+    page changing.
+*/
 
 public class StartController {
     @FXML
-    private AnchorPane page, startPage, gameSelectPage;
+    private AnchorPane page, startPage, gameSelectPage, newGamePage;
     @FXML
-    private Button newGameBtn, gameSelectBtn, backBtn;
+    private Button newGameBtn, gameSelectBtn, backBtn, backBtn1;
     @FXML
     private TextField gameIDField;
     @FXML
-    private PasswordField gamePasswordField;
-    private double defaultWidth, defaultHeight;
-    private boolean alreadyMaximized = false;
-    
+    private PasswordField gamePasswordField, setPasswordField;
     @FXML
-    private void newGame() {
+    private Spinner<Integer> numPlayersSpinner;
     
-    }
+    private double defaultWidth, defaultHeight;
+    private boolean alreadyMaximized;
     
     @FXML
     private void changePage(ActionEvent event) {
         startPage.setVisible(false);
+        newGamePage.setVisible(false);
         gameSelectPage.setVisible(false);
         
-        Button button = (Button)event.getSource();
+        Button button = (Button) event.getSource();
         AnchorPane pageToShow = null;
         
-        if(button.equals(newGameBtn)) {
-            return;
+        if (button.equals(newGameBtn)) {
+            pageToShow = newGamePage;
+            numPlayersSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 8, 2, 1));
         } else if (button.equals(gameSelectBtn)) {
             pageToShow = gameSelectPage;
-        } else if(button.equals(backBtn)) {
+        } else if (button.equals(backBtn) || button.equals(backBtn1)) {
             pageToShow = startPage;
         }
         
@@ -52,20 +53,27 @@ public class StartController {
     }
     
     @FXML
+    private void createGame() {
+        int gameID = SQLUtils.createNewGame(setPasswordField.getText(), numPlayersSpinner.getValue());
+        if(gameID == -1) return;
+        
+        changeScene(gameID);
+    }
+    
+    @FXML
     private void enterGame() {
         int gameID = Utils.safeParseInt(gameIDField.getText());
         if (gameID == -1) return;
         
-        if (SQLUtils.gameExists(gameID, gamePasswordField.getText())) {
+        if (SQLUtils.gameExists(gameID, gamePasswordField.getText()))
             changeScene(gameID);
-        } else {
+        else
             Utils.errorAlert(
                     Alert.AlertType.ERROR,
                     "Error In enterGame",
                     "That Game Does Not Exist",
                     "Please enter the correct game id and password and try again."
             );
-        }
     }
     
     private void changeScene(int gameID) {
@@ -91,7 +99,7 @@ public class StartController {
     
     @FXML
     private void windowDrag(MouseEvent event) {
-        if(alreadyMaximized)
+        if (alreadyMaximized)
             windowMaximize();
         Utils.windowDrag(event, page);
     }
@@ -100,8 +108,8 @@ public class StartController {
     private void windowMaximize() {
         if (!alreadyMaximized) {
             Scene scene = page.getScene();
-            double initWidth = scene.getWidth();
-            double initHeight = scene.getHeight();
+            double initWidth = scene.getWidth(),
+                    initHeight = scene.getHeight();
             
             defaultWidth = (defaultWidth == 0) ? scene.getWidth() : defaultWidth;
             defaultHeight = (defaultHeight == 0) ? scene.getHeight() : defaultHeight;

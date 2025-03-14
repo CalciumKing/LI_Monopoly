@@ -1,4 +1,5 @@
 package com.example.monopoly_li;
+
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -16,24 +17,21 @@ import javafx.stage.StageStyle;
 
 import java.util.Optional;
 
+/*
+    Name: Landen Ingerslev
+    Assignment: Java Monopoly Project
+    Description: Random utilities to be used around the application,
+    a method is placed here if it is used in multiple scripts ex: window actions
+*/
+
 public class Utils {
-    private static double xOffset = 0;
-    private static double yOffset = 0;
+    private static double xOffset = 0, yOffset = 0;
     
     // region Alert Methods
     public static void errorAlert(Alert.AlertType type, String title,
                                   String headerText, String contentText) {
         Alert alert = createAlert(type, title, headerText, contentText);
         alert.showAndWait();
-    }
-    
-    private static Alert createAlert(Alert.AlertType type, String title,
-                                     String headerText, String contentText) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(headerText);
-        alert.setContentText(contentText);
-        return alert;
     }
     
     public static Optional<ButtonType> confirmAlert(Alert.AlertType type, String title,
@@ -45,6 +43,15 @@ public class Utils {
         alert.getButtonTypes().setAll(yes, no);
         return alert.showAndWait();
     }
+    
+    private static Alert createAlert(Alert.AlertType type, String title,
+                                     String headerText, String contentText) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(headerText);
+        alert.setContentText(contentText);
+        return alert;
+    }
     // endregion Alert Methods
     
     public static int safeParseInt(String value) {
@@ -53,9 +60,9 @@ public class Utils {
         } catch (NumberFormatException e) {
             Utils.errorAlert(
                     Alert.AlertType.ERROR,
-                    "Safe Parse Double Error",
-                    "Error Parsing a String Value To A Double",
-                    "Cannot parse " + value + " into a double, please try again."
+                    "Safe Parse Int Error",
+                    "Error Parsing a String Value To A Int",
+                    "Cannot parse " + value + " into an int, please try again."
             );
             e.printStackTrace();
             return -1;
@@ -66,21 +73,18 @@ public class Utils {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource(sceneName));
             Parent root = fxmlLoader.load();
+            Stage stage = new Stage();
+            stage.initStyle(StageStyle.TRANSPARENT);
+            stage.setScene(new Scene(root));
             
-            if(gameID != -1) { // entering game
-                Stage stage = new Stage();
-                stage.initStyle(StageStyle.TRANSPARENT);
+            if (gameID != -1) { // entering game
                 stage.setTitle("Monopoly Application | Game ID: " + gameID);
-                stage.setScene(new Scene(root));
                 stage.show();
                 
                 BoardController boardController = fxmlLoader.getController();
                 boardController.initialize(gameID, SQLUtils.getPlayers(gameID), maximized);
             } else { // exiting game
-                Stage stage = new Stage();
-                stage.initStyle(StageStyle.TRANSPARENT);
                 stage.setTitle("Monopoly Application | Game Select");
-                stage.setScene(new Scene(root));
                 stage.show();
             }
         } catch (Exception e) {
@@ -120,9 +124,9 @@ public class Utils {
         
         stage.setMaximized(!alreadyMaximized);
         
-        double ratio = width / height;
-        double newWidth = scene.getWidth(), newHeight = scene.getHeight();
-        double scaleFactor = (newWidth / newHeight > ratio) ? newHeight / height : newWidth / width;
+        double ratio = width / height,
+                newWidth = scene.getWidth(), newHeight = scene.getHeight(),
+                scaleFactor = (newWidth / newHeight > ratio) ? newHeight / height : newWidth / width;
         boolean condition = scaleFactor >= 1;
         
         if (condition) {

@@ -2,26 +2,31 @@ package com.example.monopoly_li.Square;
 
 import com.example.monopoly_li.Player;
 
+/*
+    Name: Landen Ingerslev
+    Assignment: Java Monopoly Project
+    Description: Holds information for each property, accessed by multiple
+    classes, property data is initialized each game by SQL stored data.
+    Properties that can be bought are of this class.
+    Inherits from Cell class.
+*/
+
 public class Property extends Cell {
     private final String color;
     private final int price;
-    private final int[] rent = new int[6];
+    private final int[] rent;
     private int stage;
     private Player owner;
     
+    // constructor for both new and owned properties
     public Property(String name, int id, int price,
                     int[] rent, String color, int stage) {
         super(name, Type.PROPERTY, id);
         this.price = price;
-        this.rent[0] = rent[0];
-        this.rent[1] = rent[1];
-        this.rent[2] = rent[2];
-        this.rent[3] = rent[3];
-        this.rent[4] = rent[4];
-        this.rent[5] = rent[5];
+        this.rent = rent;
         this.color = color;
         this.stage = stage;
-        owner = null;
+        owner = null; // loading owned properties are assigned an owner later for sql reasons
     }
     
     // region Getters/Setters

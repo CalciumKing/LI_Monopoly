@@ -1,7 +1,15 @@
 package com.example.monopoly_li.Square;
 
-import com.example.monopoly_li.Player;
 import java.util.ArrayList;
+
+/*
+    Name: Landen Ingerslev
+    Assignment: Java Monopoly Project
+    Description: Holds information for each Card, accessed by multiple
+    classes, card data is initialized each game by SQL stored data.
+    Used for spaces that draw cards (ex: chance, chest).
+    Inherits from Cell class.
+*/
 
 public class Card extends Cell {
     private final Action card;
@@ -15,7 +23,6 @@ public class Card extends Cell {
         cards.add(new Action(
                 "Advance to GO",
                 player -> {
-                    System.out.println("working3");
                     player.setPosition(0);
                     player.passGo();
                 }
@@ -23,57 +30,38 @@ public class Card extends Cell {
         
         cards.add(new Action(
                 "Bank pays you $50",
-                player -> {
-                    System.out.println("working1");
-                    player.addBalance(50);
-                }
+                player -> player.addBalance(50)
         ));
         
         cards.add(new Action(
                 "Advance to Boardwalk",
-                player -> {
-                    System.out.println("working4");
-                    player.setPosition(39);
-                }
+                player -> player.setPosition(39)
         ));
         
         cards.add(new Action(
                 "You inherit $100",
-                player -> {
-                    System.out.println("working2");
-                    player.addBalance(100);
-                }
+                player -> player.addBalance(100)
         ));
         
         cards.add(new Action(
                 "From sale of stock you get $45",
-                player -> {
-                    System.out.println("working5");
-                    player.addBalance(45);
-                }
+                player -> player.addBalance(45)
         ));
         // endregion
         
         // region Bad Cards
         cards.add(new Action(
                 "Go directly to Jail. Do not pass GO, do not collect $200.",
-                player -> {
-                    System.out.println("working6");
-                    player.setInJail(true);
-                    player.goToJail();
-                }
+                player -> player.setInJail(true)
         ));
         
         cards.add(new Action(
                 "Doctor’s fees. Pay $50",
-                player -> {
-                    System.out.println("working7");
-                    player.removeBalance(50);
-                }
+                player -> player.removeBalance(50)
         ));
         // endregion
         
-        card = cards.get((int)(Math.random() * ((isChest) ? 4 : cards.size())));
+        card = cards.get((int) (Math.random() * ((isChest) ? 4 : cards.size())));
     }
     
     public Action getCard() {

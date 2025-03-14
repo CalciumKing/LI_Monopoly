@@ -1,4 +1,4 @@
-/*
+/* be able to click on cells for cell information dynamically
 package com.example.monopoly_li;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseButton;

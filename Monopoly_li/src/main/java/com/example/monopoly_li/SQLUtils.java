@@ -10,7 +10,13 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.function.Consumer;
+
+/*
+    Name: Landen Ingerslev
+    Assignment: Java Monopoly Project
+    Description: SQL utilities manager, all that happens here is
+    importing or exporting data from the SQL database.
+*/
 
 public class SQLUtils {
     public static boolean gameExists(int gameID, String password) {
@@ -35,6 +41,76 @@ public class SQLUtils {
             e.printStackTrace();
         }
         return false;
+    }
+    
+    public static int createNewGame(String password, int numPlayers) {
+        try(Connection connection = connectDB()) {
+            if(connection == null) return -1;
+            
+            String sql = "insert into game (password, turn) values (?, 0);";
+            
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, password);
+            statement.executeUpdate();
+            
+            createPlayers(numPlayers);
+            
+            return getNewestGameID();
+        } catch (Exception e) {
+            Utils.errorAlert(
+                    Alert.AlertType.ERROR,
+                    "Error In createNewGame",
+                    "Error Creating Game",
+                    "There was an error creating a game."
+            );
+            e.printStackTrace();
+        }
+        return -1;
+    }
+    
+    private static void createPlayers(int numPlayers) {
+        try (Connection connection = connectDB()) {
+            if (connection == null) return;
+            
+            for (int i = 0; i < numPlayers; i++) {
+                String sql = "insert into players (game_id, balance, position, inJail) values (?, 1500, 0, 0);";
+                
+                PreparedStatement statement = connection.prepareStatement(sql);
+                statement.setInt(1, getNewestGameID());
+                statement.executeUpdate();
+            }
+        } catch (Exception e) {
+            Utils.errorAlert(
+                    Alert.AlertType.ERROR,
+                    "Error In createPlayers",
+                    "Error Creating Players",
+                    "An error occurred when creating new players for the newest created game."
+            );
+            e.printStackTrace();
+        }
+    }
+    
+    private static int getNewestGameID() {
+        try(Connection connection = connectDB()) {
+            if(connection == null) return -1;
+            
+            String sql = "select max(game_id) from game;";
+            
+            PreparedStatement statement = connection.prepareStatement(sql);
+            ResultSet result = statement.executeQuery();
+            
+            if(result.next())
+                return result.getInt(1);
+        } catch (Exception e) {
+            Utils.errorAlert(
+                    Alert.AlertType.ERROR,
+                    "Error In getNewestGameID",
+                    "Error Returning new GameID",
+                    "There was an error retrieving the newly created game id."
+            );
+            e.printStackTrace();
+        }
+        return -1;
     }
     
     public static Player[] getPlayers (int gameID) {
@@ -174,12 +250,10 @@ public class SQLUtils {
                     );
                 } else {
                     data[i] = switch(name) {
-                        case "Go" -> new Cell( // change to empty cell if remove passgo,
+                        case "Go" -> new Cell(
                                 name,
-//                                "Advance to GO",
                                 Type.GO,
                                 id
-//                                Player::passGo // possibly remove because of move() in Player
                         );
                         case "Jail" -> new Cell(
                                 name,
@@ -197,7 +271,6 @@ public class SQLUtils {
                                 Type.GO_TO_JAIL,
                                 id,
                                 player -> {
-                                    System.out.println("going to jail");
                                     player.setInJail(true);
                                     player.goToJail();
                                 }
@@ -209,7 +282,7 @@ public class SQLUtils {
                                     card.getCard().getDescription(),
                                     Type.CHANCE,
                                     id,
-                                    player -> card.getCard().execute(player) // Card::drawCard ???
+                                    player -> card.getCard().execute(player)
                             );
                         }
                         case "Community Chest 1", "Community Chest 2", "Community Chest 3" -> {
@@ -219,10 +292,10 @@ public class SQLUtils {
                                     card.getCard().getDescription(),
                                     Type.CHEST,
                                     id,
-                                    player -> card.getCard().execute(player) // Card::drawCard ???
+                                    player -> card.getCard().execute(player)
                             );
                         }
-                        case "Income Tax", "Luxury Tax" -> new Action( // sometimes adds money ???
+                        case "Income Tax", "Luxury Tax" -> new Action(
                                     name,
                                     "Pay Tax",
                                     Type.TAX,
@@ -230,8 +303,7 @@ public class SQLUtils {
                                     player -> player.payTax(.1)
                             );
                         default -> {
-                            System.out.println(id);
-                            System.out.println(name);
+                            System.out.println(id + ", " + name);
                             yield null;
                         }
                     };
