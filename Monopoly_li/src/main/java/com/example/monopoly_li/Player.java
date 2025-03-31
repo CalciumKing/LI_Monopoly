@@ -12,9 +12,9 @@ import java.util.ArrayList;
 */
 
 public class Player {
+    private final ArrayList<Property> owned;
     private final int id, game;
     private int balance, position, prevPosition;
-    private final ArrayList<Property> owned;
     private boolean inJail;
     
     // constructor for making a new player for a new game

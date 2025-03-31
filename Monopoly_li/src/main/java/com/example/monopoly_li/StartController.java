@@ -68,7 +68,7 @@ public class StartController {
         if (SQLUtils.gameExists(gameID, gamePasswordField.getText()))
             changeScene(gameID);
         else
-            Utils.errorAlert(
+            Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Error In enterGame",
                     "That Game Does Not Exist",

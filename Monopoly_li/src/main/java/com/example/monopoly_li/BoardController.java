@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 /*
@@ -21,12 +22,13 @@ import java.util.Optional;
 */
 
 public class BoardController {
+    // region Variables
     @FXML
-    private Button addHouseHotelBtn, buySellBtn;
+    private Button addHouseHotelBtn, buyBtn, sellBtn;
     @FXML
     private AnchorPane page;
     @FXML
-    private Label rolled, landed, playerName, playerMoney, playerProperties, otherPlayersList, tabText;
+    private Label rolled, landed, playerName, playerMoney, playerProperties, otherPlayersList, tabText, stage;
     
     private Player[] players;
     private Cell[] properties;
@@ -34,6 +36,7 @@ public class BoardController {
     private int turn, gameID, playerTurns;
     private double defaultWidth, defaultHeight;
     private boolean alreadyMaximized;
+    // endregion Variables
     
     // run from start page, setting up board
     public void initialize(int gameID, Player[] players, boolean alreadyMaximized) {
@@ -47,6 +50,7 @@ public class BoardController {
         this.alreadyMaximized = alreadyMaximized;
 //        printPlayers();
         initPlayerInfo();
+        initProperties();
     }
     
     // method used only for seeing all player info during development
@@ -66,22 +70,88 @@ public class BoardController {
     }
     
     private void initPlayerInfo() {
-        Player currentPlayer = players[turn];
+        Player curr = players[turn];
         dice = new int[]{0, 0};
-        updateUI(currentPlayer);
+        updateUI();
         rolled.setText("Player Rolled: -1");
-        currentPlayer.setPrevPosition(currentPlayer.getPosition());
+        curr.setPrevPosition(curr.getPosition());
+    }
+    
+    private void initProperties() {
+        for(Player player : players)
+            for(Property property : player.getOwned())
+                ((Property) properties[property.getId() - 1]).setOwner(player);
     }
     
     @FXML
     private void addHouseHotel() {
         // method to add a house or hotel to a property based on the property's stage
+        Property property = (Property) properties[players[turn].getPosition()];
+        int cost = calcCost(property);
+        int balance = players[turn].getBalance();
+        
+        if (balance - cost >= 0) {
+            Optional<ButtonType> optionSelected = Utils.confirmAlert(
+                    Alert.AlertType.CONFIRMATION,
+                    "Purchase Property?",
+                    "Would You Like To Purchase A House/Hotel For " + cost + "?",
+                    "You will have " + (balance - cost) + " remaining.",
+                    "Yes", "No"
+            );
+            
+            if (optionSelected.isPresent() && optionSelected.get().getText().equals("Yes")) {
+                players[turn].removeBalance(cost);
+                balance = players[turn].getBalance();
+                property.addStage();
+                
+                Utils.normalAlert(
+                        Alert.AlertType.INFORMATION,
+                        "House/Hotel Bought",
+                        "Successfully Purchased House/Hotel",
+                        "Remaining balance: " + balance
+                );
+                
+                updateUI();
+            }
+            
+            updateUI();
+        } else
+            Utils.normalAlert(
+                    Alert.AlertType.INFORMATION,
+                    "Cannot Afford House/Hotel",
+                    "You Do Not Have Enough Money To Purchase A House/Hotel On This Property",
+                    "House/Hotel Cost: " + cost + ", Player Balance: " + balance
+            );
+    }
+    
+    private int calcCost(Property prop) {
+        int id = prop.getId();
+        int cost = (id / 10) * 50;
+        
+//        if(id <= 10)
+//            cost = 50;
+//        else if (id <= 20)
+//            cost = 100;
+//        else if (id <= 30)
+//            cost = 150;
+//        else if (id <= 40)
+//            cost = 200;
+//        else
+//            cost = -1;
+
+        return cost * prop.getStage();
     }
     
     @FXML
-    private void buyOrSell() {
-        // method to buy a property with no houses or sell a property
-        // giving a player money based on how many houses/hotel is on it
+    private void buyProperty() {
+        // method to buy a property with no houses
+        // removing player money based on how much the property costs
+    }
+    
+    @FXML
+    private void sellProperty() {
+        // method to sell a property that a player owns
+        // gives player amount based on stage of property
     }
     
     @FXML
@@ -127,19 +197,26 @@ public class BoardController {
             player.move(dice[0] + dice[1]);
         
         playerTurns++;
-        updateUI(player);
+        updateUI();
         checkCell();
     }
     
-    private void updateUI(Player currentPlayer) {
+    private void updateUI() {
+        Player currentPlayer = players[turn];
         playerName.setText("Player ID: " + currentPlayer.getId());
         playerMoney.setText("$" + currentPlayer.getBalance());
         rolled.setText("Player Rolled: " + dice[0] + " + " + dice[1]);
         landed.setText("Player Landed: " + properties[players[turn].getPosition()].getName());
         
-        playerProperties.setText("");
-        for (Property property : currentPlayer.getOwned())
-            playerProperties.setText(playerProperties.getText() + property.getName() + "\n");
+        ArrayList<Property> owned = currentPlayer.getOwned();
+        
+        if(owned.isEmpty())
+            playerProperties.setText("None");
+        else {
+            StringBuilder text = new StringBuilder();
+            owned.forEach(property -> text.append(property.getName()).append("\n"));
+            playerProperties.setText(text.toString());
+        }
         
         otherPlayersList.setText("");
         for (int i = 0; i < players.length; i++) {
@@ -162,36 +239,45 @@ public class BoardController {
     private void checkCell() {
         Player currentPlayer = players[turn];
         Cell currentCell = properties[currentPlayer.getPosition()];
-        Action action;
         
         switch (currentCell.getType()) {
             case PROPERTY: // non-action, purchasable cells
                 Property property = (Property) currentCell;
-                if (property.getOwner() == null) { // purchasable
-                    buySellBtn.setVisible(true);
+                stage.setVisible(true);
+                stage.setText("Stage: " + property.getStage());
+                
+                if (property.getStage() == 5)
+                    hideButtons();
+                else if (property.getOwner() == null) { // purchasable
+                    buyBtn.setVisible(true);
+                    sellBtn.setVisible(false);
                     addHouseHotelBtn.setVisible(false);
                 } else if (property.getOwner().equals(currentPlayer)) { // current player is owner
-                    buySellBtn.setVisible(false);
+                    buyBtn.setVisible(false);
+                    sellBtn.setVisible(true);
                     addHouseHotelBtn.setVisible(true);
                 } else // owned by another player
                     hideButtons();
                 break;
             case GO_TO_JAIL, TAX, CHEST, CHANCE: // non-purchasable cells with actions
                 System.out.println(currentCell.getType());
-                action = (Action) currentCell;
+                Action action = (Action) currentCell;
                 action.execute(currentPlayer);
                 System.out.println(action.getName() + "," + action.getDescription());
                 hideButtons();
-                updateUI(currentPlayer);
+                updateUI();
+                stage.setVisible(false);
                 break;
             case FREE_PARKING, JAIL, GO:
                 hideButtons();
+                stage.setVisible(false);
                 break;
         }
     }
     
     private void hideButtons() {
-        buySellBtn.setVisible(false);
+        buyBtn.setVisible(false);
+        sellBtn.setVisible(false);
         addHouseHotelBtn.setVisible(false);
     }
     // endregion

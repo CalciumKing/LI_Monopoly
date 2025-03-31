@@ -32,7 +32,7 @@ public class SQLUtils {
             
             return result.next();
         } catch (Exception e) {
-            Utils.errorAlert(
+            Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Error In gameExists",
                     "Error Getting Game From Database",
@@ -57,7 +57,7 @@ public class SQLUtils {
             
             return getNewestGameID();
         } catch (Exception e) {
-            Utils.errorAlert(
+            Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Error In createNewGame",
                     "Error Creating Game",
@@ -80,7 +80,7 @@ public class SQLUtils {
                 statement.executeUpdate();
             }
         } catch (Exception e) {
-            Utils.errorAlert(
+            Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Error In createPlayers",
                     "Error Creating Players",
@@ -102,7 +102,7 @@ public class SQLUtils {
             if(result.next())
                 return result.getInt(1);
         } catch (Exception e) {
-            Utils.errorAlert(
+            Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Error In getNewestGameID",
                     "Error Returning new GameID",
@@ -136,15 +136,14 @@ public class SQLUtils {
             
             Player[] players = new Player[data.size()];
             for (int i = 0; i < data.size(); i++) {
-                Player current = data.get(i);
-                for(Property property : current.getOwned())
-                    property.setOwner(current);
-                players[i] = current;
+                players[i] = data.get(i);
+                for(Property property : players[i].getOwned())
+                    property.setOwner(players[i]);
             }
             
             return players;
         } catch (Exception e) {
-            Utils.errorAlert(
+            Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Error Getting Players",
                     "Error in getPlayers",
@@ -188,7 +187,7 @@ public class SQLUtils {
             
             return new ArrayList<>(data);
         } catch (Exception e) {
-            Utils.errorAlert(
+            Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Error Getting Players",
                     "Error in getOwnedProperties",
@@ -313,7 +312,7 @@ public class SQLUtils {
             
             return data;
         } catch (Exception e) {
-            Utils.errorAlert(
+            Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Error Getting All Properties",
                     "Error in getAllProperties",
@@ -338,7 +337,7 @@ public class SQLUtils {
             if(result.next())
                 return result.getInt(1);
         } catch (Exception e) {
-            Utils.errorAlert(
+            Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Error Getting Stage",
                     "Error in getStage",
@@ -362,7 +361,7 @@ public class SQLUtils {
             if(result.next())
                 return result.getInt(1);
         } catch (Exception e) {
-            Utils.errorAlert(
+            Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Error Getting Turn",
                     "Error In getTurn",
@@ -377,7 +376,7 @@ public class SQLUtils {
         try {
             return DriverManager.getConnection("jdbc:mysql://localhost:3306/monopoly", "root", "password");
         } catch (Exception e) {
-            Utils.errorAlert(
+            Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Connection Error",
                     "Error Connecting To Pharmacy Database",

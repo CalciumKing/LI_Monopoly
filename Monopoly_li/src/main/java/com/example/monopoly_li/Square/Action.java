@@ -41,7 +41,7 @@ public class Action extends Cell {
         if (effect != null)
             effect.accept(player);
         else
-            Utils.errorAlert(
+            Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Error In execute",
                     "Cannot Execute Because 'effect' Is Null",

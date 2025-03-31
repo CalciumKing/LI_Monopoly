@@ -25,10 +25,10 @@ import java.util.Optional;
 */
 
 public class Utils {
-    private static double xOffset = 0, yOffset = 0;
+    private static double xOffset, yOffset;
     
     // region Alert Methods
-    public static void errorAlert(Alert.AlertType type, String title,
+    public static void normalAlert(Alert.AlertType type, String title,
                                   String headerText, String contentText) {
         Alert alert = createAlert(type, title, headerText, contentText);
         alert.showAndWait();
@@ -58,7 +58,7 @@ public class Utils {
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
-            Utils.errorAlert(
+            Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Safe Parse Int Error",
                     "Error Parsing a String Value To A Int",
@@ -88,7 +88,7 @@ public class Utils {
                 stage.show();
             }
         } catch (Exception e) {
-            Utils.errorAlert(
+            Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Scene Error",
                     "Error Changing Scene",

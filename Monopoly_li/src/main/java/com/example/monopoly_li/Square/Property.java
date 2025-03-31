@@ -13,10 +13,10 @@ import com.example.monopoly_li.Player;
 
 public class Property extends Cell {
     private final String color;
-    private final int price;
-    private final int[] rent;
-    private int stage;
     private Player owner;
+    private final int[] rent;
+    private final int price;
+    private int stage; // 0 purchasable, 1 bought, 2-4 houses, 5 hotel
     
     // constructor for both new and owned properties
     public Property(String name, int id, int price,
