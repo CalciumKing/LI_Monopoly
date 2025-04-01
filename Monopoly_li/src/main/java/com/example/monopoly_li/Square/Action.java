@@ -27,7 +27,8 @@ public class Action extends Cell {
     }
     
     // constructor for action spaces ex: go to jail, chance, chest, and taxes
-    public Action(String name, String description, Type type, int id, Consumer<Player> effect) {
+    public Action(String name, String description,
+                  Type type, int id, Consumer<Player> effect) {
         super(name, type, id);
         this.description = description;
         this.effect = effect;
@@ -38,9 +39,15 @@ public class Action extends Cell {
     }
     
     public void execute(Player player) {
-        if (effect != null)
+        if (effect != null) {
             effect.accept(player);
-        else
+            Utils.normalAlert(
+                    Alert.AlertType.INFORMATION,
+                    "Action Card Executed",
+                    getName(),
+                    description
+            );
+        } else
             Utils.normalAlert(
                     Alert.AlertType.ERROR,
                     "Error In execute",

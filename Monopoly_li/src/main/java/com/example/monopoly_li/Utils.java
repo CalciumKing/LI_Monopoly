@@ -118,7 +118,8 @@ public class Utils {
         stage.setY(event.getScreenY() - yOffset);
     }
     
-    public static void windowMaximize(AnchorPane pane, double width, double height, boolean alreadyMaximized) {
+    public static void windowMaximize(AnchorPane pane, double width,
+                                      double height, boolean alreadyMaximized) {
         Stage stage = (Stage) pane.getScene().getWindow();
         Scene scene = stage.getScene();
         

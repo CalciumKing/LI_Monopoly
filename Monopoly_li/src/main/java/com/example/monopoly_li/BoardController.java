@@ -32,12 +32,13 @@ public class BoardController {
     
     private Player[] players;
     private Cell[] properties;
-    private int[] dice = {0, 0};
+    private int[] dice;
     private int turn, gameID, playerTurns;
     private double defaultWidth, defaultHeight;
     private boolean alreadyMaximized;
     // endregion Variables
     
+    // region Initialization Methods
     // run from start page, setting up board
     public void initialize(int gameID, Player[] players, boolean alreadyMaximized) {
         turn = SQLUtils.getTurn(gameID);
@@ -54,27 +55,26 @@ public class BoardController {
     }
     
     // method used only for seeing all player info during development
-    private void printPlayers() {
-        for (Player player : players) {
-            System.out.println(player.getGame());
-            System.out.println(player.getId());
-            System.out.println(player.getBalance());
-            System.out.println(player.getPosition());
-            for (Property property : player.getOwned()) {
-                System.out.println(property.getId());
-                System.out.println(property.getName());
-                System.out.println(property.getOwner().getId());
-            }
-            System.out.println();
-        }
-    }
+//    private void printPlayers() {
+//        for (Player player : players) {
+//            System.out.println(player.getGame());
+//            System.out.println(player.getId());
+//            System.out.println(player.getBalance());
+//            System.out.println(player.getPosition());
+//            for (Property property : player.getOwned()) {
+//                System.out.println(property.getId());
+//                System.out.println(property.getName());
+//                System.out.println(property.getOwner().getId());
+//            }
+//            System.out.println();
+//        }
+//    }
     
     private void initPlayerInfo() {
         Player curr = players[turn];
         dice = new int[]{0, 0};
         updateUI();
-        rolled.setText("Player Rolled: -1");
-        curr.setPrevPosition(curr.getPosition());
+        checkCell();
     }
     
     private void initProperties() {
@@ -82,70 +82,98 @@ public class BoardController {
             for(Property property : player.getOwned())
                 ((Property) properties[property.getId() - 1]).setOwner(player);
     }
+    // endregion
     
+    // region FXML Methods
     @FXML
     private void addHouseHotel() {
-        // method to add a house or hotel to a property based on the property's stage
-        Property property = (Property) properties[players[turn].getPosition()];
-        int cost = calcCost(property);
-        int balance = players[turn].getBalance();
+        Player player = players[turn];
+        Property property = (Property) properties[player.getPosition()];
+        int cost = calcHouseHotelCost(property), balance = player.getBalance();
         
         if (balance - cost >= 0) {
             Optional<ButtonType> optionSelected = Utils.confirmAlert(
-                    Alert.AlertType.CONFIRMATION,
-                    "Purchase Property?",
-                    "Would You Like To Purchase A House/Hotel For " + cost + "?",
-                    "You will have " + (balance - cost) + " remaining.",
-                    "Yes", "No"
+                Alert.AlertType.CONFIRMATION,
+                "Purchase House/Hotel?",
+                "Would You Like To Purchase A House/Hotel For " + cost + "?",
+                "You will have " + (balance - cost) + " remaining.",
+                "Yes", "No"
             );
             
             if (optionSelected.isPresent() && optionSelected.get().getText().equals("Yes")) {
-                players[turn].removeBalance(cost);
-                balance = players[turn].getBalance();
+                player.removeBalance(cost);
                 property.addStage();
                 
                 Utils.normalAlert(
-                        Alert.AlertType.INFORMATION,
-                        "House/Hotel Bought",
-                        "Successfully Purchased House/Hotel",
-                        "Remaining balance: " + balance
+                    Alert.AlertType.INFORMATION,
+                    "House/Hotel Bought",
+                    "Successfully Purchased House/Hotel",
+                    "Remaining balance: " + player.getBalance() +
+                            ", Property Stage: " + property.getStage()
                 );
                 
-                updateUI();
+                playerMoney.setText("$" + player.getBalance());
+                stage.setText("Stage: " + property.getStage());
+                if(property.getStage() == 5)
+                    addHouseHotelBtn.setVisible(false);
             }
-            
-            updateUI();
         } else
             Utils.normalAlert(
-                    Alert.AlertType.INFORMATION,
-                    "Cannot Afford House/Hotel",
-                    "You Do Not Have Enough Money To Purchase A House/Hotel On This Property",
-                    "House/Hotel Cost: " + cost + ", Player Balance: " + balance
+                Alert.AlertType.INFORMATION,
+                "Cannot Afford House/Hotel",
+                "You Do Not Have Enough Money To Purchase A House/Hotel On This Property",
+                "House/Hotel Cost: " + cost +
+                        ", Player Balance: " + balance +
+                        ", Difference: " + (cost - balance)
             );
-    }
-    
-    private int calcCost(Property prop) {
-        int id = prop.getId();
-        int cost = (id / 10) * 50;
-        
-//        if(id <= 10)
-//            cost = 50;
-//        else if (id <= 20)
-//            cost = 100;
-//        else if (id <= 30)
-//            cost = 150;
-//        else if (id <= 40)
-//            cost = 200;
-//        else
-//            cost = -1;
-
-        return cost * prop.getStage();
     }
     
     @FXML
     private void buyProperty() {
-        // method to buy a property with no houses
-        // removing player money based on how much the property costs
+        Player player = players[turn];
+        Property property = (Property) properties[player.getPosition()];
+        int cost = property.getPrice(), balance = player.getBalance();
+        
+        if (balance - cost >= 0) {
+            Optional<ButtonType> optionSelected = Utils.confirmAlert(
+                Alert.AlertType.CONFIRMATION,
+                "Purchase Property?",
+                "Would You Like To Purchase " + property.getName() + " For " + cost + "?",
+                "You will have " + (balance - cost) + " remaining.",
+                "Yes", "No"
+            );
+            
+            if (optionSelected.isPresent() && optionSelected.get().getText().equals("Yes")) {
+                player.removeBalance(cost);
+                property.addStage();
+                
+                Utils.normalAlert(
+                    Alert.AlertType.INFORMATION,
+                    "Property Bought",
+                    "Successfully Purchased " + property.getName(),
+                    "Remaining balance: " + player.getBalance()
+                );
+                
+                player.addProperty(property);
+                property.setOwner(player);
+                
+                playerMoney.setText("$" + player.getBalance());
+                stage.setText("Stage: 1");
+                addHouseHotelBtn.setVisible(true);
+                buyBtn.setVisible(false);
+                sellBtn.setVisible(true);
+                
+                updateUI();
+            }
+        } else
+            Utils.normalAlert(
+                Alert.AlertType.INFORMATION,
+                "Cannot Afford Property",
+                "You Do Not Have Enough Money To Purchase " + property.getName(),
+                "Property Cost: " + cost +
+                        ", Player Balance: " + balance +
+                        ", Difference: " + (cost - balance)
+            );
     }
     
     @FXML
@@ -160,7 +188,7 @@ public class BoardController {
             if (playerTurns < 3) {
                 takeTurn();
                 return;
-            } else {
+            } else { // player goes to jail of doubles rolled 3 times in a row
                 players[turn].goToJail();
                 playerTurns = 0;
             }
@@ -168,27 +196,31 @@ public class BoardController {
         turn = (turn + 1) % players.length;
         takeTurn();
     }
+    // endregion
     
     // region Helper Methods
+    private int calcHouseHotelCost(Property prop) {
+        int id = prop.getId(), cost = (id > 40) ? 999999999 : ((id - 1) / 10) * 50 + 50;
+        return cost * prop.getStage();
+    }
+    
     private void takeTurn() {
         Player player = players[turn];
         Optional<ButtonType> optionSelected = (player.isInJail()) ? Utils.confirmAlert(
-                Alert.AlertType.INFORMATION,
-                "Player In Jail",
-                "Player is in Jail, Roll Or Pay",
-                "Would you like to roll dice for a chance to " +
-                        "get doubles and escape prison, or pay $200 to escape",
-                "Roll For Doubles",
-                "Pay $200"
+            Alert.AlertType.INFORMATION,
+            "Player In Jail",
+            "Player is in Jail, Roll Or Pay",
+            "Would you like to roll dice for a chance to " +
+                    "get doubles and escape prison, or pay $200 to escape",
+            "Roll For Doubles",
+            "Pay $200"
         ) : Optional.empty();
         
-        player.setPrevPosition(player.getPosition());
         dice = new int[]{rollDie(), rollDie()}; // rolling 2 dice, 2 numbers 1-6, total between 2-12
         
         if (optionSelected.isPresent()) { // if player is in jail (not visiting)
-            if (optionSelected.get().getText().equals("Roll For Doubles")) {
-                if (dice[0] == dice[1])
-                    player.setInJail(false);
+            if (optionSelected.get().getText().equals("Roll For Doubles") && dice[0] == dice[1]) {
+                player.setInJail(false);
             } else {
                 player.removeBalance(200);
                 player.setInJail(false);
@@ -203,12 +235,12 @@ public class BoardController {
     
     private void updateUI() {
         Player currentPlayer = players[turn];
+        ArrayList<Property> owned = currentPlayer.getOwned();
+        
         playerName.setText("Player ID: " + currentPlayer.getId());
         playerMoney.setText("$" + currentPlayer.getBalance());
         rolled.setText("Player Rolled: " + dice[0] + " + " + dice[1]);
         landed.setText("Player Landed: " + properties[players[turn].getPosition()].getName());
-        
-        ArrayList<Property> owned = currentPlayer.getOwned();
         
         if(owned.isEmpty())
             playerProperties.setText("None");
@@ -224,16 +256,16 @@ public class BoardController {
             
             Player curr = players[i];
             otherPlayersList.setText(
-                    otherPlayersList.getText() +
-                            curr.getId() +
-                            " $" + curr.getBalance() +
-                            ", " + properties[curr.getPosition()].getName()
+                otherPlayersList.getText() +
+                curr.getId() +
+                " $" + curr.getBalance() +
+                ", " + properties[curr.getPosition()].getName()
             );
         }
     }
     
     private int rollDie() {
-        return ((int) (Math.random() * 6) + 1);
+        return (int) (Math.random() * 6) + 1;
     }
     
     private void checkCell() {
@@ -241,44 +273,112 @@ public class BoardController {
         Cell currentCell = properties[currentPlayer.getPosition()];
         
         switch (currentCell.getType()) {
-            case PROPERTY: // non-action, purchasable cells
+            case PROPERTY: // non-action, purchasable cells (properties)
                 Property property = (Property) currentCell;
                 stage.setVisible(true);
                 stage.setText("Stage: " + property.getStage());
                 
-                if (property.getStage() == 5)
-                    hideButtons();
-                else if (property.getOwner() == null) { // purchasable
+                if (property.getOwner() == null) { // purchasable
                     buyBtn.setVisible(true);
                     sellBtn.setVisible(false);
                     addHouseHotelBtn.setVisible(false);
                 } else if (property.getOwner().equals(currentPlayer)) { // current player is owner
                     buyBtn.setVisible(false);
                     sellBtn.setVisible(true);
-                    addHouseHotelBtn.setVisible(true);
-                } else // owned by another player
+                    
+                    if(property.getStage() != 5 && property.getStage() != 0) { // property isn't a hotel and is owned by player
+                        addHouseHotelBtn.setVisible(true);
+                        for (Property prop : getPropertiesOfColor(property.getColor())) {
+                            if (prop.getOwner() != currentPlayer) { // player doesn't own all similar colored properties
+                                addHouseHotelBtn.setVisible(false);
+                                break;
+                            }
+                        }
+                    } else // property is a hotel and is owned by the player
+                        addHouseHotelBtn.setVisible(false);
+                } else { // owned by another player
                     hideButtons();
+                    stage.setVisible(true);
+                    currentPlayer.removeBalance(property.getRent());
+                    playerMoney.setText("$" + currentPlayer.getBalance());
+                    
+                    if(currentPlayer.getBalance() < 0) { // player is broke, player is eliminated
+                        removePlayer(currentPlayer.getId());
+                        turn = (turn + 1) % players.length;
+                        takeTurn();
+                    } else { // player continues
+                        Utils.normalAlert(
+                                Alert.AlertType.INFORMATION,
+                                "Player Successfully Paid Rent",
+                                "Player Landed On a Property And Paid Rent Successfully",
+                                "Player paid: " + property.getRent() + ", Remaining Balance: " + currentPlayer.getBalance()
+                        );
+                    }
+                }
                 break;
             case GO_TO_JAIL, TAX, CHEST, CHANCE: // non-purchasable cells with actions
-                System.out.println(currentCell.getType());
-                Action action = (Action) currentCell;
-                action.execute(currentPlayer);
-                System.out.println(action.getName() + "," + action.getDescription());
                 hideButtons();
+                ((Action) currentCell).execute(currentPlayer);
                 updateUI();
-                stage.setVisible(false);
                 break;
-            case FREE_PARKING, JAIL, GO:
+            case FREE_PARKING, JAIL, GO: // non-purchasable cells without actions or actions executed elsewhere
                 hideButtons();
-                stage.setVisible(false);
                 break;
         }
+    }
+    
+    private void removePlayer(int id) {
+        players[turn] = null;
+        
+        Utils.normalAlert(
+            Alert.AlertType.ERROR,
+            "Player " + id + "Eliminated",
+            "Player Cannot Afford Property Rent",
+            "Player " + id + " is eliminated from the game"
+        );
+        
+        Player victor = null;
+        int playerCount = 0;
+        
+        for(Player player : players) {
+            if (player != null) {
+                playerCount++;
+                victor = player; // only used if 1 player remains
+            }
+        }
+        
+        if(playerCount == 1) { // one player remaining, game has been won, game ends
+            Utils.normalAlert(
+                    Alert.AlertType.INFORMATION,
+                    "Game Won",
+                    "One Player Remains, Game Finished",
+                    "Victorious Player: " + victor.getId()
+            );
+            
+            // delete game data
+            
+            changeScene();
+        }
+    }
+    
+    private void changeScene() {
+        Utils.changeScene("start.fxml", -1, alreadyMaximized);
+        page.getScene().getWindow().hide();
+    }
+    
+    private ArrayList<Property> getPropertiesOfColor(String color) {
+        ArrayList<Property> colored = new ArrayList<>();
+        for(Cell cell : properties)
+            if(cell instanceof Property property && property.getColor().equals(color))
+                colored.add(property);
+        return colored;
     }
     
     private void hideButtons() {
         buyBtn.setVisible(false);
         sellBtn.setVisible(false);
         addHouseHotelBtn.setVisible(false);
+        stage.setVisible(false);
     }
     // endregion
     
@@ -301,7 +401,7 @@ public class BoardController {
     @FXML
     private void windowDrag(MouseEvent event) {
         if (alreadyMaximized)
-            windowMaximize();
+            windowMaximize(); // undoing maximization
         Utils.windowDrag(event, page);
     }
     

@@ -1,6 +1,7 @@
 package com.example.monopoly_li;
 
 import com.example.monopoly_li.Square.Property;
+import javafx.scene.control.Alert;
 
 import java.util.ArrayList;
 
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 public class Player {
     private final ArrayList<Property> owned;
     private final int id, game;
-    private int balance, position, prevPosition;
+    private int balance, position;
     private boolean inJail;
     
     // constructor for making a new player for a new game
@@ -60,32 +61,37 @@ public class Player {
     public ArrayList<Property> getOwned() {
         return owned;
     }
-    public int getPrevPosition() {
-        return prevPosition;
-    }
-    public void setPrevPosition(int prevPosition) {
-        this.prevPosition = prevPosition;
-    }
     public boolean isInJail() {
         return inJail;
     }
     public void setInJail(boolean inJail) {
         this.inJail = inJail;
-        if (position != 10)
-            goToJail();
+        goToJail();
     }
     // endregion
     
     // region Helper Methods
     public void addBalance(int amount) { // replace print statements for stack pane notification
-        System.out.print("old balance:" + balance);
-        balance += amount;
-        System.out.println(" added:" + amount + ", new balance:" + balance);
+        Utils.normalAlert(
+                Alert.AlertType.INFORMATION,
+                "Amount Added To Balance",
+                amount + " Added To Player " + id + "'s Balance",
+                "Old Balance: " + balance + ", New Balance: " + (balance += amount)
+        );
+//        System.out.print("old balance:" + balance);
+//        balance += amount;
+//        System.out.println(" added:" + amount + ", new balance:" + balance);
     }
     public void removeBalance(int amount) { // replace print statements for stack pane notification
-        System.out.print("old balance:" + balance);
-        balance -= amount;
-        System.out.println(" removed:" + amount + ", new balance:" + balance);
+        Utils.normalAlert(
+                Alert.AlertType.INFORMATION,
+                "Amount Removed From Balance",
+                amount + " Removed From Player " + id + "'s Balance",
+                "Old Balance: " + balance + ", New Balance: " + (balance -= amount)
+        );
+//        System.out.print("old balance:" + balance);
+//        balance -= amount;
+//        System.out.println(" removed:" + amount + ", new balance:" + balance);
     }
     public void payTax(double percent) {
         removeBalance((int) (balance * percent));

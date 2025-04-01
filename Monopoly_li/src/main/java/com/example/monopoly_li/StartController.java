@@ -16,6 +16,7 @@ import javafx.scene.layout.AnchorPane;
 */
 
 public class StartController {
+    // region Variables
     @FXML
     private AnchorPane page, startPage, gameSelectPage, newGamePage;
     @FXML
@@ -29,7 +30,9 @@ public class StartController {
     
     private double defaultWidth, defaultHeight;
     private boolean alreadyMaximized;
+    // endregion
     
+    // region FXML Methods
     @FXML
     private void changePage(ActionEvent event) {
         startPage.setVisible(false);
@@ -75,6 +78,7 @@ public class StartController {
                     "Please enter the correct game id and password and try again."
             );
     }
+    // endregion
     
     private void changeScene(int gameID) {
         Utils.changeScene("board.fxml", gameID, alreadyMaximized);
@@ -100,7 +104,7 @@ public class StartController {
     @FXML
     private void windowDrag(MouseEvent event) {
         if (alreadyMaximized)
-            windowMaximize();
+            windowMaximize(); // undoing maximization
         Utils.windowDrag(event, page);
     }
     
