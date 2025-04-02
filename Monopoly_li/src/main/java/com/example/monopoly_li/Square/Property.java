@@ -44,6 +44,8 @@ public class Property extends Cell {
     }
     public void setStage(int stage) {
         this.stage = stage;
+        if(stage == 0)
+            owner = null;
     }
     public void addStage() {
         this.stage++;
